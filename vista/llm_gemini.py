@@ -1,6 +1,6 @@
 # llm_gemini.py
 from google import genai
-from echo.llm_base import BaseLLMClient
+from vista.llm_base import BaseLLMClient
 import time
 import logging
 

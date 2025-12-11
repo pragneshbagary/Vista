@@ -1,4 +1,4 @@
-"""Embedding generation functionality for the Personal AI RAG System."""
+"""Embedding generation functionality for the Vista."""
 
 from typing import List
 import logging

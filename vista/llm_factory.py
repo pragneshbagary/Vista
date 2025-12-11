@@ -3,9 +3,9 @@
 
 import logging
 from typing import Optional
-from echo.llm_base import BaseLLMClient
-from echo.llm_openai import OpenAILLMClient
-from echo.llm_gemini import GeminiLLMClient
+from vista.llm_base import BaseLLMClient
+from vista.llm_openai import OpenAILLMClient
+from vista.llm_gemini import GeminiLLMClient
 
 logger = logging.getLogger(__name__)
 

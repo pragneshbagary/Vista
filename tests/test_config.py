@@ -2,7 +2,7 @@
 
 import pytest
 import os
-from echo.config import Config
+from vista.config import Config
 
 
 def test_config_defaults():

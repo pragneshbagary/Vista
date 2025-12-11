@@ -5,7 +5,7 @@ from unittest.mock import Mock, patch, MagicMock
 from openai.types.chat import ChatCompletion, ChatCompletionMessage
 from openai.types.chat.chat_completion import Choice
 
-from echo.llm_openai import OpenAILLMClient
+from vista.llm_openai import OpenAILLMClient
 
 
 class TestLLMClient:
@@ -13,12 +13,12 @@ class TestLLMClient:
     
     def test_init(self):
         """Test LLMClient initialization."""
-        client = LLMClient(api_key="test-key", model="gpt-3.5-turbo")
+        client = OpenAILLMClient(api_key="test-key", model="gpt-3.5-turbo")
         assert client.api_key == "test-key"
         assert client.model == "gpt-3.5-turbo"
         assert client.client is not None
     
-    @patch('personal_ai.llm_client.OpenAI')
+    @patch('vista.llm_client.OpenAI')
     def test_generate_response_success(self, mock_openai):
         """Test successful response generation."""
         # Mock the OpenAI client and response
@@ -39,13 +39,13 @@ class TestLLMClient:
         mock_client.chat.completions.create.return_value = mock_response
         
         # Test the client
-        client = LLMClient(api_key="test-key")
+        client = OpenAILLMClient(api_key="test-key")
         result = client.generate_response("Test prompt", max_tokens=100)
         
         assert result == "Test response"
         mock_client.chat.completions.create.assert_called_once()
     
-    @patch('personal_ai.llm_client.OpenAI')
+    @patch('vista.llm_client.OpenAI')
     def test_generate_response_empty_response(self, mock_openai):
         """Test handling of empty response."""
         mock_client = Mock()
@@ -62,15 +62,15 @@ class TestLLMClient:
         
         mock_client.chat.completions.create.return_value = mock_response
         
-        client = LLMClient(api_key="test-key")
+        client = OpenAILLMClient(api_key="test-key")
         
         with pytest.raises(Exception, match="Empty response from OpenAI API"):
             client.generate_response("Test prompt")
     
-    @patch('personal_ai.llm_client.time.sleep')
+    @patch('vista.llm_client.time.sleep')
     def test_retry_with_backoff_success_on_retry(self, mock_sleep):
         """Test retry logic succeeds on second attempt."""
-        client = LLMClient(api_key="test-key")
+        client = OpenAILLMClient(api_key="test-key")
         
         # Mock function that fails once then succeeds
         mock_func = Mock(side_effect=[Exception("First failure"), "Success"])
@@ -81,10 +81,10 @@ class TestLLMClient:
         assert mock_func.call_count == 2
         mock_sleep.assert_called_once_with(1)  # 2^0 = 1 second delay
     
-    @patch('personal_ai.llm_client.time.sleep')
+    @patch('vista.llm_client.time.sleep')
     def test_retry_with_backoff_all_attempts_fail(self, mock_sleep):
         """Test retry logic when all attempts fail."""
-        client = LLMClient(api_key="test-key")
+        client = OpenAILLMClient(api_key="test-key")
         
         # Mock function that always fails
         mock_func = Mock(side_effect=Exception("Always fails"))
@@ -100,7 +100,7 @@ class TestLLMClient:
     
     def test_retry_with_backoff_immediate_success(self):
         """Test retry logic when function succeeds immediately."""
-        client = LLMClient(api_key="test-key")
+        client = OpenAILLMClient(api_key="test-key")
         
         mock_func = Mock(return_value="Immediate success")
         

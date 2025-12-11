@@ -6,15 +6,15 @@ import sys
 from pathlib import Path
 from typing import List
 
-from echo.config import Config
-from echo.document_loader import DocumentLoader
-from echo.text_chunker import TextChunker
-from echo.embedding_generator import EmbeddingGenerator
-from echo.vector_store import VectorStoreManager
-from echo.llm_factory import LLMFactory
-from echo.query_engine import QueryEngine
-from echo.cli import CLI
-from echo.models import Document, Chunk
+from vista.config import Config
+from vista.document_loader import DocumentLoader
+from vista.text_chunker import TextChunker
+from vista.embedding_generator import EmbeddingGenerator
+from vista.vector_store import VectorStoreManager
+from vista.llm_factory import LLMFactory
+from vista.query_engine import QueryEngine
+from vista.cli import CLI
+from vista.models import Document, Chunk
 
 
 def setup_logging() -> None:

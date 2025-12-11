@@ -1,11 +1,11 @@
-"""Vector store management for the Personal AI RAG System."""
+"""Vector store management for the Vista."""
 
 from typing import List, Optional
 import logging
 import chromadb
 from chromadb.config import Settings
 
-from echo.models import Chunk, RetrievedChunk
+from vista.models import Chunk, RetrievedChunk
 
 logger = logging.getLogger(__name__)
 

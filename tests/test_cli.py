@@ -4,8 +4,8 @@ import pytest
 from unittest.mock import Mock, patch
 from io import StringIO
 
-from echo.cli import CLI
-from echo.models import QueryResponse, RetrievedChunk
+from vista.cli import CLI
+from vista.models import QueryResponse, RetrievedChunk
 
 
 class TestCLI:

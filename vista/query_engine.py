@@ -1,12 +1,12 @@
-"""Query engine for the Personal AI RAG System."""
+"""Query engine for the Vista."""
 
 from typing import List
 import logging
 
-from echo.models import QueryResponse, RetrievedChunk
-from echo.vector_store import VectorStoreManager
-from echo.embedding_generator import EmbeddingGenerator
-from echo.llm_base import BaseLLMClient
+from vista.models import QueryResponse, RetrievedChunk
+from vista.vector_store import VectorStoreManager
+from vista.embedding_generator import EmbeddingGenerator
+from vista.llm_base import BaseLLMClient
 logger = logging.getLogger(__name__)
 
 

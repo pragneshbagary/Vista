@@ -1,10 +1,10 @@
-"""Document loading functionality for the Personal AI RAG System."""
+"""Document loading functionality for the Vista."""
 
 from pathlib import Path
 from typing import List, Dict
 import logging
 
-from echo.models import Document
+from vista.models import Document
 
 logger = logging.getLogger(__name__)
 

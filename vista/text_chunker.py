@@ -1,10 +1,10 @@
-"""Text chunking functionality for the Personal AI RAG System."""
+"""Text chunking functionality for the Vista."""
 
 import re
 from typing import List
 import logging
 
-from echo.models import Document, Chunk
+from vista.models import Document, Chunk
 
 logger = logging.getLogger(__name__)
 

@@ -1,4 +1,4 @@
-"""LLM client for the Personal AI RAG System."""
+"""LLM client for the Vista."""
 
 import logging
 import time
@@ -6,7 +6,7 @@ from typing import Callable, Any
 from openai import OpenAI
 from openai.types.chat import ChatCompletion
 
-from echo.llm_base import BaseLLMClient
+from vista.llm_base import BaseLLMClient
 
 logger = logging.getLogger(__name__)
 

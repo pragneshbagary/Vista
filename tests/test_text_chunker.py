@@ -1,8 +1,8 @@
 """Tests for text chunking functionality."""
 
 import pytest
-from echo.text_chunker import TextChunker
-from echo.models import Document
+from vista.text_chunker import TextChunker
+from vista.models import Document
 
 
 def test_chunk_small_document():

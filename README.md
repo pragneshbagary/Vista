@@ -1,4 +1,4 @@
-# Personal AI RAG System
+# VISTA - Vector-Integrated Semantic Text Assistant
 
 A Retrieval-Augmented Generation (RAG) system that answers questions about personal information using structured text documents. This system processes your personal data files, creates semantic embeddings, and uses AI to provide accurate, contextual answers to questions about your background, projects, skills, and experience.
 
@@ -7,7 +7,7 @@ A Retrieval-Augmented Generation (RAG) system that answers questions about perso
 - **Document Processing**: Automatically loads and processes text files from your data directory
 - **Intelligent Chunking**: Splits documents into semantically coherent chunks while preserving sentence boundaries
 - **Semantic Search**: Uses vector embeddings to find the most relevant information for your queries
-- **AI-Powered Responses**: Leverages OpenAI's GPT models to generate natural, contextual answers
+- **AI-Powered Responses**: Leverages LLM models to generate natural, contextual answers
 - **Source Attribution**: Shows which documents were used to generate each answer
 - **Interactive CLI**: Easy-to-use command-line interface for asking questions
 - **Persistent Storage**: Saves processed embeddings to disk for fast startup
@@ -57,7 +57,7 @@ A Retrieval-Augmented Generation (RAG) system that answers questions about perso
 ### Prerequisites
 
 - **Python 3.12+** (required)
-- **OpenAI API key** (required for AI responses)
+- **LLM API key** (Supports Gemini and OpenAI)
 - **uv** package manager (recommended) or pip
 
 ### Step-by-Step Installation
@@ -65,7 +65,7 @@ A Retrieval-Augmented Generation (RAG) system that answers questions about perso
 1. **Clone the repository**:
    ```bash
    git clone <repository-url>
-   cd personal-ai
+   cd vista
    ```
 
 2. **Install dependencies**:
@@ -94,7 +94,7 @@ A Retrieval-Augmented Generation (RAG) system that answers questions about perso
 
 4. **Verify installation**:
    ```bash
-   python -c "import personal_ai; print('Installation successful!')"
+   python -c "import vista; print('Installation successful!')"
    ```
 
 ## ⚙️ Configuration
@@ -106,6 +106,7 @@ The system is highly configurable through environment variables or a `.env` file
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `OPENAI_API_KEY` | Your OpenAI API key | `sk-...` |
+| `GEMINI_API_KEY` | Your GEMINI API key | `......` |
 
 ### Optional Configuration (with defaults)
 
@@ -114,7 +115,8 @@ The system is highly configurable through environment variables or a `.env` file
 | `CHUNK_SIZE` | `500` | Maximum characters per chunk |
 | `CHUNK_OVERLAP` | `50` | Overlap between consecutive chunks |
 | `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | Sentence-transformers model |
-| `LLM_MODEL` | `gpt-3.5-turbo` | OpenAI model for responses |
+| `OpenAI_MODEL` | `gpt-5.1-Mini` | OpenAI model for responses |
+| `Gemini_MODEL` | `gemini-2.5-flash` | Gemini model for responses |
 | `N_RETRIEVAL_RESULTS` | `5` | Number of chunks to retrieve per query |
 | `DATA_DIRECTORY` | `./data` | Path to your data files |
 | `PERSIST_DIRECTORY` | `./chroma_db` | Vector database storage path |
@@ -127,11 +129,13 @@ The system is highly configurable through environment variables or a `.env` file
 **Basic configuration** (`.env`):
 ```env
 OPENAI_API_KEY=sk-your-key-here
+GEMINI_API_KEY=Az-your-key-here
 ```
 
 **Advanced configuration** (`.env`):
 ```env
 OPENAI_API_KEY=sk-your-key-here
+GEMINI_API_KEY=Az-your-key-here
 CHUNK_SIZE=750
 LLM_MODEL=gpt-4
 N_RETRIEVAL_RESULTS=8
@@ -166,7 +170,7 @@ Subsequent runs will be much faster as the processed data is cached.
 ### Example Session
 
 ```
-Personal AI RAG System
+VISTA - Vector-Integrated Semantic Text Assistant
 Type 'help' for commands, 'exit' to quit.
 
 > What programming languages do I know?
@@ -294,8 +298,8 @@ The interactive CLI supports several commands:
 ### Project Structure
 
 ```
-personal-ai/
-├── personal_ai/           # Main package
+vista/
+├── vista/           # Main package
 │   ├── __init__.py
 │   ├── config.py          # Configuration management
 │   ├── models.py          # Data models (Document, Chunk, etc.)
@@ -327,7 +331,7 @@ personal-ai/
 uv run pytest
 
 # Run with coverage report
-uv run pytest --cov=personal_ai --cov-report=term-missing
+uv run pytest --cov=vista --cov-report=term-missing
 
 # Run specific test file
 uv run pytest tests/test_config.py -v
@@ -340,10 +344,10 @@ uv run pytest tests/ -v --hypothesis-show-statistics
 
 ```bash
 # Type checking (if mypy is installed)
-mypy personal_ai/
+mypy vista/
 
 # Code formatting (if black is installed)
-black personal_ai/ tests/
+black vista/ tests/
 ```
 
 ## 🐛 Troubleshooting
@@ -355,8 +359,8 @@ black personal_ai/ tests/
 - Check the `DATA_DIRECTORY` configuration
 - Verify file permissions
 
-**"OpenAI API key not found"**
-- Check that `OPENAI_API_KEY` is set in your `.env` file
+**"LLM API key not found"**
+- Check that `XXXXX_API_KEY` is set in your `.env` file
 - Ensure the API key is valid and has sufficient credits
 - Verify there are no extra spaces or quotes around the key
 
@@ -395,7 +399,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 ### System Overview
 
-The Personal AI RAG System follows a pipeline architecture:
+The Vector-Integrated Semantic Text Assistant follows a pipeline architecture:
 
 ```
 Documents → Chunking → Embeddings → Vector Store → Query → LLM → Response
@@ -426,9 +430,11 @@ Documents → Chunking → Embeddings → Vector Store → Query → LLM → Res
 - **Performance**: Efficient batch processing and caching
 
 ## 📄 License
+This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
 
-[Add your license here]
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+
 
 ---
 
-**Need help?** Check the troubleshooting section above or review the design documents in `.kiro/specs/personal-ai-rag/`.

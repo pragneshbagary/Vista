@@ -1,4 +1,4 @@
-"""Data models for the Personal AI RAG System."""
+"""Data models for the Vista."""
 
 from dataclasses import dataclass
 from typing import Dict, List

@@ -3,8 +3,8 @@
 import pytest
 from unittest.mock import Mock, MagicMock
 
-from echo.query_engine import QueryEngine
-from echo.models import RetrievedChunk, QueryResponse
+from vista.query_engine import QueryEngine
+from vista.models import RetrievedChunk, QueryResponse
 
 
 class TestQueryEngine:

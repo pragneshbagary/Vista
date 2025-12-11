@@ -146,7 +146,7 @@
 
 # ========================================================================================================================================================================================================================================================
 # config.py
-"""Configuration management for the Personal AI RAG System."""
+"""Configuration management for the Vista."""
 
 import os
 from dataclasses import dataclass

@@ -1,1 +1,1 @@
-"""Tests for the Personal AI RAG System."""
+"""Tests for the Vista."""

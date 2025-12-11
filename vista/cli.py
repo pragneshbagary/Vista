@@ -1,12 +1,12 @@
-"""CLI interface for the Personal AI RAG System."""
+"""CLI interface for the Vista."""
 
 import logging
 import signal
 import sys
 from typing import Optional
 
-from echo.query_engine import QueryEngine
-from echo.models import QueryResponse
+from vista.query_engine import QueryEngine
+from vista.models import QueryResponse
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class CLI:
     def run(self) -> None:
         """Start interactive CLI loop."""
         print("=" * 60)
-        print("ECHO")
+        print("VISTA - Vector-Integrated Semantic Text Assistant")
         print("=" * 60)
         print("Ask me questions about Pragnesh Bagary!")
         print("\nAvailable commands:")
@@ -149,7 +149,7 @@ class CLI:
     
     def _handle_exit(self) -> None:
         """Handle exit command by gracefully shutting down."""
-        print("Thank you for using Personal AI RAG System. Goodbye!")
+        print("Thank you for using Vista. Goodbye!")
         self.running = False
     
     def _display_response(self, response: QueryResponse) -> None:

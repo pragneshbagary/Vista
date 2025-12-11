@@ -1,7 +1,7 @@
 [project]
-name = "personal-ai"
+name = "Vista"
 version = "0.1.0"
-description = "Personal AI RAG System for answering questions about personal data"
+description = "Vector-Integrated Semantic Text Assistant"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
