@@ -1,0 +1,82 @@
+# ----------------------------
+# ENVIRONMENT & CONFIG FILES
+# ----------------------------
+.env
+.env.*        # any variant (env.local, env.dev, etc.)
+*.env
+
+# ----------------------------
+# PYTHON
+# ----------------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Compiled files & caches
+*.egg
+*.egg-info/
+.eggs/
+*.log
+
+# uv (Python package manager)
+.uv/
+
+# ----------------------------
+# PROJECT SPECIFIC
+# ----------------------------
+
+# Kiro development environment
+.kiro/
+
+# ChromaDB persistence directory
+chroma_db/
+PERSIST_DIRECTORY/
+*/chroma_db/
+
+# Your data directory (your private documents)
+data/
+DATA_DIRECTORY/
+*/data/
+
+# If your embedding script generates outputs
+outputs/
+results/
+
+# Model files
+models/
+*.bin
+*.pt
+*.ckpt
+
+# ----------------------------
+# OS / EDITOR FILES
+# ----------------------------
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+.history/
+
+# PyCharm / JetBrains
+.idea/
+
+# ----------------------------
+# DOCKER
+# ----------------------------
+docker-data/
+*.pid
+
+# ----------------------------
+# MISC
+# ----------------------------
+*.tmp
+*.bak
+*.swp
