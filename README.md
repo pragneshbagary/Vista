@@ -32,10 +32,10 @@ A Retrieval-Augmented Generation (RAG) system that answers questions about perso
    uv sync
    ```
 
-2. **Set up your OpenAI API key**:
+2. **Set up your LLM API key**:
    ```bash
    cp .env.example .env
-   # Edit .env and add your OPENAI_API_KEY
+   # Edit .env and add your LLM_API_KEY
    ```
 
 3. **Add your data files** to the `data/` directory (see [Data Organization](#data-organization))
@@ -89,7 +89,7 @@ A Retrieval-Augmented Generation (RAG) system that answers questions about perso
    
    Edit `.env` and add your OpenAI API key:
    ```env
-   OPENAI_API_KEY=your_actual_api_key_here
+   XXXXXX_API_KEY=your_actual_api_key_here
    ```
 
 4. **Verify installation**:
