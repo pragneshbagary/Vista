@@ -1,141 +1,121 @@
-"use client"
+import React, { useState, useRef, forwardRef, useImperativeHandle } from "react"
+import { Send, Paperclip, Mic, StopCircle } from "lucide-react"
 
-import { useRef, useState, forwardRef, useImperativeHandle, useEffect } from "react"
-import { Send, Loader2, Plus, Mic } from "lucide-react"
-import ComposerActionsPopover from "./ComposerActionsPopover"
-import { cls } from "./utils"
+const Composer = forwardRef(({ onSend, disabled }, ref) => {
+  const [input, setInput] = useState("")
+  const [isRecording, setIsRecording] = useState(false)
+  const textareaRef = useRef(null)
 
-const Composer = forwardRef(function Composer({ onSend, busy }, ref) {
-  const [value, setValue] = useState("")
-  const [sending, setSending] = useState(false)
-  const [lineCount, setLineCount] = useState(1)
-  const inputRef = useRef(null)
-
-  useEffect(() => {
-    if (inputRef.current) {
-      const textarea = inputRef.current
-      const lineHeight = 24
-      const minHeight = 24
-
-      textarea.style.height = "auto"
-      const scrollHeight = textarea.scrollHeight
-      const calculatedLines = Math.max(1, Math.ceil(scrollHeight / lineHeight))
-
-      setLineCount(calculatedLines)
-
-      if (calculatedLines <= 12) {
-        textarea.style.height = `${Math.max(minHeight, scrollHeight)}px`
-        textarea.style.overflowY = "hidden"
-      } else {
-        textarea.style.height = `${12 * lineHeight}px`
-        textarea.style.overflowY = "auto"
-      }
+  // Expose methods to parent
+  useImperativeHandle(ref, () => ({
+    insertTemplate: (content) => {
+      setInput(content)
+      textareaRef.current?.focus()
     }
-  }, [value])
+  }))
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      insertTemplate: (templateContent) => {
-        setValue((prev) => {
-          const newValue = prev ? `${prev}\n\n${templateContent}` : templateContent
-          setTimeout(() => {
-            inputRef.current?.focus()
-            const length = newValue.length
-            inputRef.current?.setSelectionRange(length, length)
-          }, 0)
-          return newValue
-        })
-      },
-      focus: () => {
-        inputRef.current?.focus()
-      },
-    }),
-    [],
-  )
-
-  async function handleSend() {
-    if (!value.trim() || sending) return
-    setSending(true)
-    try {
-      await onSend?.(value)
-      setValue("")
-      inputRef.current?.focus()
-    } finally {
-      setSending(false)
+  const handleSend = () => {
+    if (input.trim() && !disabled) {
+      onSend(input.trim())
+      setInput("")
+      // Reset textarea height
+      if (textareaRef.current) {
+        textareaRef.current.style.height = "auto"
+      }
     }
   }
 
-  const hasContent = value.trim().length > 0
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
+  const handleInput = (e) => {
+    setInput(e.target.value)
+    
+    // Auto-resize textarea
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 200) + "px"
+    }
+  }
+
+  const toggleRecording = () => {
+    setIsRecording(!isRecording)
+    // TODO: Implement actual voice recording
+  }
 
   return (
-    <div className="border-t border-zinc-200/60 p-4 dark:border-zinc-800">
-      <div
-        className={cls(
-          "mx-auto flex flex-col rounded-3xl border bg-white shadow-sm dark:bg-zinc-950 transition-all duration-200",
-          "max-w-3xl border-zinc-200 dark:border-zinc-800",
-        )}
-      >
-        {/* Textarea area - grows upward */}
-        <div className="flex-1 px-4 pt-4 pb-2">
+    <div className="glass-card glass-shadow relative">
+      {/* Main input area */}
+      <div className="flex items-end gap-3 p-3">
+        {/* Attachment button */}
+        <button
+          className="glass-button flex-shrink-0 p-2 text-white/60 hover:text-white disabled:opacity-50"
+          disabled={disabled}
+          title="Attach file"
+        >
+          <Paperclip className="h-5 w-5" />
+        </button>
+
+        {/* Textarea */}
+        <div className="flex-1 relative">
           <textarea
-            ref={inputRef}
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="How can I help you today?"
+            ref={textareaRef}
+            value={input}
+            onChange={handleInput}
+            onKeyDown={handleKeyDown}
+            placeholder={disabled ? "VISTA is thinking..." : "Ask anything about your knowledge base..."}
+            disabled={disabled}
+            className="w-full resize-none bg-transparent text-white placeholder-white/40 focus:outline-none text-sm leading-relaxed py-2 max-h-[200px] scrollbar-glass"
             rows={1}
-            className={cls(
-              "w-full resize-none bg-transparent text-sm outline-none placeholder:text-zinc-400 transition-all duration-200",
-              "min-h-[24px] text-left leading-6",
-            )}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault()
-                handleSend()
-              }
-            }}
+            style={{ minHeight: "40px" }}
           />
         </div>
 
-        {/* Bottom toolbar: + on left, mic/send on right */}
-        <div className="flex items-center justify-between px-3 pb-3">
-          <ComposerActionsPopover>
-            <button
-              className="inline-flex shrink-0 items-center justify-center rounded-full p-2 text-zinc-500 hover:bg-zinc-100 hover:text-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-300 transition-colors"
-              title="Add attachment"
-            >
-              <Plus className="h-5 w-5" />
-            </button>
-          </ComposerActionsPopover>
-
-          <div className="flex items-center gap-1 shrink-0">
-            <button
-              className="inline-flex items-center justify-center rounded-full p-2 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300 transition-colors"
-              title="Voice input"
-            >
-              <Mic className="h-5 w-5" />
-            </button>
+        {/* Voice/Send button */}
+        <div className="flex flex-shrink-0 gap-2">
+         
             <button
               onClick={handleSend}
-              disabled={sending || busy || !hasContent}
-              className={cls(
-                "inline-flex shrink-0 items-center justify-center rounded-full p-2.5 transition-colors",
-                hasContent
-                  ? "bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-                  : "bg-zinc-200 text-zinc-400 dark:bg-zinc-800 dark:text-zinc-600 cursor-not-allowed",
-              )}
+              disabled={disabled}
+              className="glass-shine group relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 p-2.5 text-white shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95"
+              title="Send message"
             >
-              {sending || busy ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
+              <Send className="h-5 w-5" />
             </button>
-          </div>
         </div>
       </div>
 
-      <div className="mx-auto mt-2 max-w-3xl px-1 text-center text-[11px] text-zinc-400 dark:text-zinc-500">
-        AI can make mistakes. Check important info.
-      </div>
+
+
+      {/* Character count or tips */}
+      {input.length > 500 && (
+        <div className="border-t border-white/10 px-4 py-2">
+          <span className={`text-xs ${
+            input.length > 2000 ? "text-red-400" : "text-white/50"
+          }`}>
+            {input.length} / 2000 characters
+          </span>
+        </div>
+      )}
+
+      {/* Keyboard shortcut hint */}
+      {!input && (
+        <div className="absolute bottom-4 right-4 pointer-events-none">
+          <span className="text-xs text-white/30">
+            <kbd className="px-1.5 py-0.5 glass-light rounded text-white/40 font-mono text-[10px]">Enter</kbd> to send
+            {" • "}
+            <kbd className="px-1.5 py-0.5 glass-light rounded text-white/40 font-mono text-[10px]">Shift+Enter</kbd> for new line
+          </span>
+        </div>
+      )}
     </div>
   )
 })
+
+Composer.displayName = "Composer"
 
 export default Composer

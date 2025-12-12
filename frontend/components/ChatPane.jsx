@@ -1,172 +1,154 @@
-"use client"
-
-import { useState, forwardRef, useImperativeHandle, useRef } from "react"
-import { Pencil, RefreshCw, Check, X, Square } from "lucide-react"
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react"
+import { Bot, Sparkles } from "lucide-react"
 import Message from "./Message"
 import Composer from "./Composer"
-import { cls, timeAgo } from "./utils"
 
-function ThinkingMessage({ onPause }) {
-  return (
-    <Message role="assistant">
-      <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1">
-          <div className="h-2 w-2 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.3s]"></div>
-          <div className="h-2 w-2 animate-bounce rounded-full bg-zinc-400 [animation-delay:-0.15s]"></div>
-          <div className="h-2 w-2 animate-bounce rounded-full bg-zinc-400"></div>
-        </div>
-        <span className="text-sm text-zinc-500">AI is thinking...</span>
-        <button
-          onClick={onPause}
-          className="ml-auto inline-flex items-center gap-1 rounded-full border border-zinc-300 px-2 py-1 text-xs text-zinc-600 hover:bg-zinc-50 dark:border-zinc-700 dark:text-zinc-400 dark:hover:bg-zinc-800"
-        >
-          <Square className="h-3 w-3" /> Pause
-        </button>
-      </div>
-    </Message>
-  )
-}
-
-const ChatPane = forwardRef(function ChatPane(
-  { conversation, onSend, onEditMessage, onResendMessage, isThinking, onPauseThinking },
-  ref,
-) {
-  const [editingId, setEditingId] = useState(null)
-  const [draft, setDraft] = useState("")
-  const [busy, setBusy] = useState(false)
+const ChatPane = forwardRef(({ 
+  conversation, 
+  onSend, 
+  onEditMessage, 
+  onResendMessage, 
+  isThinking, 
+  onPauseThinking 
+}, ref) => {
+  const messagesEndRef = useRef(null)
   const composerRef = useRef(null)
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      insertTemplate: (templateContent) => {
-        composerRef.current?.insertTemplate(templateContent)
-      },
-    }),
-    [],
-  )
+  // Expose methods to parent component
+  useImperativeHandle(ref, () => ({
+    insertTemplate: (content) => {
+      if (composerRef.current) {
+        composerRef.current.insertTemplate(content)
+      }
+    }
+  }))
 
-  if (!conversation) return null
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
 
-  const tags = ["Certified", "Personalized", "Experienced", "Helpful"]
-  const messages = Array.isArray(conversation.messages) ? conversation.messages : []
-  const count = messages.length || conversation.messageCount || 0
+  useEffect(() => {
+    scrollToBottom()
+  }, [conversation?.messages, isThinking])
 
-  function startEdit(m) {
-    setEditingId(m.id)
-    setDraft(m.content)
+  if (!conversation) {
+    return (
+      <div className="relative flex h-full w-full flex-col overflow-hidden">
+        {/* Animated gradient background */}
+        <div className="absolute inset-0 animated-gradient-bg opacity-40"></div>
+        
+        {/* Floating orbs */}
+        <div className="floating-orb floating-orb-1"></div>
+        <div className="floating-orb floating-orb-2"></div>
+        <div className="floating-orb floating-orb-3"></div>
+
+        {/* Empty state with glass card */}
+        <div className="relative z-10 flex h-full items-center justify-center p-8">
+          <div className="glass-card glass-shadow max-w-md space-y-6 p-8 text-center">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
+              <Sparkles className="h-8 w-8 text-white" />
+            </div>
+            <div className="space-y-3">
+              <h2 className="text-2xl font-bold tracking-tight text-white">
+                Welcome to VISTA
+              </h2>
+              <p className="text-sm text-white/70 leading-relaxed">
+                Your personal AI assistant powered by your knowledge base. Start a new chat to begin asking questions.
+              </p>
+            </div>
+            <div className="pt-4 space-y-2 text-xs text-white/50">
+              <p>💡 Try asking about your projects, skills, or experiences</p>
+              <p>⌨️ Press <kbd className="px-2 py-1 glass-light rounded text-white/70 font-mono text-xs">Cmd/Ctrl + N</kbd> for a new chat</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
-  function cancelEdit() {
-    setEditingId(null)
-    setDraft("")
-  }
-  function saveEdit() {
-    if (!editingId) return
-    onEditMessage?.(editingId, draft)
-    cancelEdit()
-  }
-  function saveAndResend() {
-    if (!editingId) return
-    onEditMessage?.(editingId, draft)
-    onResendMessage?.(editingId)
-    cancelEdit()
-  }
+
+  const messages = conversation.messages || []
 
   return (
-    <div className="flex h-full min-h-0 flex-1 flex-col">
-      <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 sm:px-8">
-        <div className="mb-2 text-3xl font-serif tracking-tight sm:text-4xl md:text-5xl">
-          <span className="block leading-[1.05] font-sans text-2xl">{conversation.title}</span>
-        </div>
-        <div className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
-          Updated {timeAgo(conversation.updatedAt)} · {count} messages
-        </div>
+    <div className="relative flex h-full w-full flex-col overflow-hidden">
+      {/* Subtle gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 via-blue-50/30 to-pink-50/50 dark:from-purple-950/20 dark:via-blue-950/10 dark:to-pink-950/20"></div>
+      
+      {/* Floating orbs (subtle) */}
+      <div className="absolute top-20 left-20 h-64 w-64 rounded-full bg-purple-500/10 blur-3xl"></div>
+      <div className="absolute bottom-20 right-20 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"></div>
 
-        <div className="mb-6 flex flex-wrap gap-2 border-b border-zinc-200 pb-5 dark:border-zinc-800">
-          {tags.map((t) => (
-            <span
-              key={t}
-              className="inline-flex items-center rounded-full border border-zinc-200 px-3 py-1 text-xs text-zinc-700 dark:border-zinc-800 dark:text-zinc-200"
-            >
-              {t}
-            </span>
-          ))}
-        </div>
-
-        {messages.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-zinc-300 p-6 text-sm text-zinc-500 dark:border-zinc-700 dark:text-zinc-400">
-            No messages yet. Say hello to start.
-          </div>
-        ) : (
-          <>
-            {messages.map((m) => (
-              <div key={m.id} className="space-y-2">
-                {editingId === m.id ? (
-                  <div className={cls("rounded-2xl border p-2", "border-zinc-200 dark:border-zinc-800")}>
-                    <textarea
-                      value={draft}
-                      onChange={(e) => setDraft(e.target.value)}
-                      className="w-full resize-y rounded-xl bg-transparent p-2 text-sm outline-none"
-                      rows={3}
-                    />
-                    <div className="mt-2 flex items-center gap-2">
-                      <button
-                        onClick={saveEdit}
-                        className="inline-flex items-center gap-1 rounded-full bg-zinc-900 px-3 py-1.5 text-xs text-white dark:bg-white dark:text-zinc-900"
-                      >
-                        <Check className="h-3.5 w-3.5" /> Save
-                      </button>
-                      <button
-                        onClick={saveAndResend}
-                        className="inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs"
-                      >
-                        <RefreshCw className="h-3.5 w-3.5" /> Save & Resend
-                      </button>
-                      <button
-                        onClick={cancelEdit}
-                        className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs"
-                      >
-                        <X className="h-3.5 w-3.5" /> Cancel
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <Message role={m.role}>
-                    <div className="whitespace-pre-wrap">{m.content}</div>
-                    {m.role === "user" && (
-                      <div className="mt-1 flex gap-2 text-[11px] text-zinc-500">
-                        <button className="inline-flex items-center gap-1 hover:underline" onClick={() => startEdit(m)}>
-                          <Pencil className="h-3.5 w-3.5" /> Edit
-                        </button>
-                        <button
-                          className="inline-flex items-center gap-1 hover:underline"
-                          onClick={() => onResendMessage?.(m.id)}
-                        >
-                          <RefreshCw className="h-3.5 w-3.5" /> Resend
-                        </button>
-                      </div>
-                    )}
-                  </Message>
-                )}
+      {/* Messages area */}
+      <div className="relative z-10 flex-1 overflow-y-auto px-4 py-6 scrollbar-glass">
+        <div className="mx-auto max-w-3xl space-y-6">
+          {messages.length === 0 ? (
+            <div className="flex h-full min-h-[400px] items-center justify-center">
+              <div className="glass-card glass-shadow max-w-md space-y-4 p-6 text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-500 shadow-lg">
+                  <Bot className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">Start the conversation</h3>
+                  <p className="text-sm text-white/60">
+                    Ask me anything from your knowledge base
+                  </p>
+                </div>
               </div>
-            ))}
-            {isThinking && <ThinkingMessage onPause={onPauseThinking} />}
-          </>
-        )}
+            </div>
+          ) : (
+            <>
+              {messages.map((message) => (
+                <Message
+                  key={message.id}
+                  message={message}
+                  onEdit={onEditMessage}
+                  onResend={onResendMessage}
+                />
+              ))}
+              
+              {/* Thinking indicator */}
+              {isThinking && (
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
+                    <Bot className="h-5 w-5 text-white" />
+                  </div>
+                  <div className="glass-card glass-shadow flex items-center gap-3 px-5 py-4">
+                    <div className="flex gap-1.5">
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-white/60 [animation-delay:-0.3s]"></div>
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-white/60 [animation-delay:-0.15s]"></div>
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-white/60"></div>
+                    </div>
+                    <span className="text-sm text-white/70">Thinking...</span>
+                    {onPauseThinking && (
+                      <button
+                        onClick={onPauseThinking}
+                        className="ml-2 text-xs text-white/50 hover:text-white/70 transition-colors"
+                      >
+                        Stop
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      <Composer
-        ref={composerRef}
-        onSend={async (text) => {
-          if (!text.trim()) return
-          setBusy(true)
-          await onSend?.(text)
-          setBusy(false)
-        }}
-        busy={busy}
-      />
+      {/* Composer area with glass effect */}
+      <div className="relative z-10 border-t border-white/10 backdrop-blur-xl bg-white/5 dark:bg-black/5">
+        <div className="mx-auto max-w-3xl px-4 py-4">
+          <Composer
+            ref={composerRef}
+            onSend={onSend}
+            disabled={isThinking}
+          />
+        </div>
+      </div>
     </div>
   )
 })
+
+ChatPane.displayName = "ChatPane"
 
 export default ChatPane

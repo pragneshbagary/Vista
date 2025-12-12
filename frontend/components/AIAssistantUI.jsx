@@ -41,7 +41,7 @@ export default function AIAssistantUI() {
     }
 
     checkVistaHealth()
-    const interval = setInterval(checkVistaHealth, 10000) // Check every 10 seconds
+    const interval = setInterval(checkVistaHealth, 30000) // Check every 30 seconds
     return () => clearInterval(interval)
   }, [])
 
@@ -326,8 +326,8 @@ export default function AIAssistantUI() {
     <div className="h-screen w-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
       {/* VISTA Status Banner - Only show if offline */}
       {vistaStatus === "offline" && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-red-500 text-white px-4 py-2 text-center text-sm font-medium">
-          ⚠️ VISTA Backend Offline - Start with: <code className="bg-red-600 px-2 py-1 rounded">python api_server.py</code>
+        <div className="fixed top-0 left-0 right-0 z-50 bg-[#ef233c] text-white px-4 py-2 text-center text-sm font-medium">
+          ⚠️ VISTA BACKEND IS CURRENTLY OFFLINE
         </div>
       )}
 
@@ -356,7 +356,7 @@ export default function AIAssistantUI() {
       </div>
 
       <div className={`mx-auto flex h-[calc(100vh-0px)] max-w-[1400px] ${vistaStatus === "offline" ? "mt-10" : ""}`}>
-        <Sidebar
+        {/* <Sidebar
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
           theme={theme}
@@ -381,7 +381,7 @@ export default function AIAssistantUI() {
           templates={templates}
           setTemplates={setTemplates}
           onUseTemplate={handleUseTemplate}
-        />
+        /> */}
 
         <main className="relative flex min-w-0 flex-1 flex-col">
           <Header 
