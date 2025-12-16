@@ -20,11 +20,12 @@ class GeminiLLMClient(BaseLLMClient):
                     model=self.model_name,
                     contents=prompt,
                     config = GenerateContentConfig(
-                        max_output_tokens= 500, 
+                        system_instruction="You are VISTA, a personal technical assistant representing the work of Pragnesh.Be clear, concise, and honest.Avoid over-polished language.Prefer practical explanations over marketing-style phrasing.If something is uncertain, say so.Do not exaggerate. Do not praise excessively.Do not use buzzwords unless necessary.",
+                        max_output_tokens= max_tokens, 
                         temperature=0.2
                     )
             )   
-                logger.debug(f"Gemini response: {response}")
+                
                 return response.text.strip()
             except Exception as e:
                 logger.error(f"Gemini API call failed: {e}")
@@ -42,3 +43,6 @@ class GeminiLLMClient(BaseLLMClient):
                 wait_time = 2 ** attempt
                 logger.warning(f"Retry attempt {attempt + 1}/{max_retries} after {wait_time}s")
                 time.sleep(wait_time)
+
+
+                

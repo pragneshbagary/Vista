@@ -44,6 +44,7 @@ PERSIST_DIRECTORY/
 data/
 DATA_DIRECTORY/
 */data/
+prompts/
 
 # If your embedding script generates outputs
 outputs/
