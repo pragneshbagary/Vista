@@ -34,31 +34,22 @@ const ChatPane = forwardRef(({
   if (!conversation) {
     return (
       <div className="relative flex h-full w-full flex-col overflow-hidden">
-        {/* Animated gradient background */}
-        <div className="absolute inset-0 animated-gradient-bg opacity-40"></div>
-        
-        {/* Floating orbs */}
-        <div className="floating-orb floating-orb-1"></div>
-        <div className="floating-orb floating-orb-2"></div>
-        <div className="floating-orb floating-orb-3"></div>
-
-        {/* Empty state with glass card */}
         <div className="relative z-10 flex h-full items-center justify-center p-8">
-          <div className="glass-card glass-shadow max-w-md space-y-6 p-8 text-center">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
-              <Sparkles className="h-8 w-8 text-white" />
+          <div className="glass-card glass-shadow max-w-md space-y-6 p-8 text-center text-foreground">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent shadow-lg">
+              <Sparkles className="h-8 w-8 text-primary-foreground" />
             </div>
             <div className="space-y-3">
-              <h2 className="text-2xl font-bold tracking-tight text-white">
+              <h2 className="text-2xl font-bold tracking-tight">
                 Welcome to VISTA
               </h2>
-              <p className="text-sm text-white/70 leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed">
                 Your personal AI assistant powered by your knowledge base. Start a new chat to begin asking questions.
               </p>
             </div>
-            <div className="pt-4 space-y-2 text-xs text-white/50">
+            <div className="pt-4 space-y-2 text-xs text-muted-foreground">
               <p>💡 Try asking about your projects, skills, or experiences</p>
-              <p>⌨️ Press <kbd className="px-2 py-1 glass-light rounded text-white/70 font-mono text-xs">Cmd/Ctrl + N</kbd> for a new chat</p>
+              <p>⌨️ Press <kbd className="px-2 py-1 glass-light rounded text-xs">Cmd/Ctrl + N</kbd> for a new chat</p>
             </div>
           </div>
         </div>
@@ -70,25 +61,18 @@ const ChatPane = forwardRef(({
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
-      {/* Subtle gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 via-blue-50/30 to-pink-50/50 dark:from-purple-950/20 dark:via-blue-950/10 dark:to-pink-950/20"></div>
-      
-      {/* Floating orbs (subtle) */}
-      <div className="absolute top-20 left-20 h-64 w-64 rounded-full bg-purple-500/10 blur-3xl"></div>
-      <div className="absolute bottom-20 right-20 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl"></div>
-
       {/* Messages area */}
       <div className="relative z-10 flex-1 overflow-y-auto px-4 py-6 scrollbar-glass">
         <div className="mx-auto max-w-3xl space-y-6">
           {messages.length === 0 ? (
             <div className="flex h-full min-h-[400px] items-center justify-center">
-              <div className="glass-card glass-shadow max-w-md space-y-4 p-6 text-center">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-blue-500 shadow-lg">
-                  <Bot className="h-6 w-6 text-white" />
+              <div className="glass-card glass-shadow max-w-md space-y-4 p-6 text-center text-foreground">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent shadow-lg">
+                  <Bot className="h-6 w-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-2">Start the conversation</h3>
-                  <p className="text-sm text-white/60">
+                  <h3 className="text-lg font-semibold mb-2">Start the conversation</h3>
+                  <p className="text-sm text-muted-foreground">
                     Ask me anything from your knowledge base
                   </p>
                 </div>
@@ -108,20 +92,20 @@ const ChatPane = forwardRef(({
               {/* Thinking indicator */}
               {isThinking && (
                 <div className="flex items-start gap-4">
-                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg">
-                    <Bot className="h-5 w-5 text-white" />
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-primary to-accent shadow-lg">
+                    <Bot className="h-5 w-5 text-primary-foreground" />
                   </div>
                   <div className="glass-card glass-shadow flex items-center gap-3 px-5 py-4">
                     <div className="flex gap-1.5">
-                      <div className="h-2 w-2 animate-bounce rounded-full bg-white/60 [animation-delay:-0.3s]"></div>
-                      <div className="h-2 w-2 animate-bounce rounded-full bg-white/60 [animation-delay:-0.15s]"></div>
-                      <div className="h-2 w-2 animate-bounce rounded-full bg-white/60"></div>
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.3s]"></div>
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground [animation-delay:-0.15s]"></div>
+                      <div className="h-2 w-2 animate-bounce rounded-full bg-muted-foreground"></div>
                     </div>
-                    <span className="text-sm text-white/70">Thinking...</span>
+                    <span className="text-sm text-muted-foreground">Thinking...</span>
                     {onPauseThinking && (
                       <button
                         onClick={onPauseThinking}
-                        className="ml-2 text-xs text-white/50 hover:text-white/70 transition-colors"
+                        className="ml-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
                       >
                         Stop
                       </button>
@@ -136,7 +120,7 @@ const ChatPane = forwardRef(({
       </div>
 
       {/* Composer area with glass effect */}
-      <div className="relative z-10 border-t border-white/10 backdrop-blur-xl bg-white/5 dark:bg-black/5">
+      <div className="relative z-10 border-t border-border bg-background/50 backdrop-blur-lg">
         <div className="mx-auto max-w-3xl px-4 py-4">
           <Composer
             ref={composerRef}
@@ -152,3 +136,4 @@ const ChatPane = forwardRef(({
 ChatPane.displayName = "ChatPane"
 
 export default ChatPane
+

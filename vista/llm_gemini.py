@@ -1,5 +1,6 @@
 # llm_gemini.py
 from google import genai
+from google.genai.types import GenerateContentConfig
 from vista.llm_base import BaseLLMClient
 import time
 import logging
@@ -18,10 +19,12 @@ class GeminiLLMClient(BaseLLMClient):
                 response = self.client.models.generate_content(
                     model=self.model_name,
                     contents=prompt,
-                    config={
-                        'max_output_tokens': max_tokens
-                    }
-                )
+                    config = GenerateContentConfig(
+                        max_output_tokens= 500, 
+                        temperature=0.2
+                    )
+            )   
+                logger.debug(f"Gemini response: {response}")
                 return response.text.strip()
             except Exception as e:
                 logger.error(f"Gemini API call failed: {e}")

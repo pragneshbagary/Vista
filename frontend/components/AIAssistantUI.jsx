@@ -323,21 +323,21 @@ export default function AIAssistantUI() {
   const selected = conversations.find((c) => c.id === selectedId) || null
 
   return (
-    <div className="h-screen w-full bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+    <div className="h-screen w-full bg-background text-foreground">
       {/* VISTA Status Banner - Only show if offline */}
       {vistaStatus === "offline" && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-[#ef233c] text-white px-4 py-2 text-center text-sm font-medium">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-destructive text-destructive-foreground px-4 py-2 text-center text-sm font-medium">
           ⚠️ VISTA BACKEND IS CURRENTLY OFFLINE
         </div>
       )}
 
-      <div className="md:hidden sticky top-0 z-40 flex items-center gap-2 border-b border-zinc-200/60 bg-white/80 px-3 py-2 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/70">
-        <div className="ml-1 flex items-center gap-2 text-sm font-semibold tracking-tight">
+      <div className="md:hidden sticky top-0 z-40 flex items-center gap-2 border-b border-border bg-background/80 px-3 py-2 backdrop-blur-lg">
+        <div className="ml-1 flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground">
           <span className="inline-flex h-4 w-4 items-center justify-center">✱</span> VISTA Assistant
           {/* Status indicator */}
           <span className={`inline-flex h-2 w-2 rounded-full ${
             vistaStatus === "online" ? "bg-green-500 animate-pulse" : 
-            vistaStatus === "offline" ? "bg-red-500" : 
+            vistaStatus === "offline" ? "bg-destructive" : 
             "bg-yellow-500 animate-pulse"
           }`}></span>
         </div>

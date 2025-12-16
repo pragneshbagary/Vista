@@ -53,7 +53,7 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
       <div className="flex items-end gap-3 p-3">
         {/* Attachment button */}
         <button
-          className="glass-button flex-shrink-0 p-2 text-white/60 hover:text-white disabled:opacity-50"
+          className="glass-button flex-shrink-0 p-2 text-muted-foreground hover:text-foreground disabled:opacity-50"
           disabled={disabled}
           title="Attach file"
         >
@@ -69,7 +69,7 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
             onKeyDown={handleKeyDown}
             placeholder={disabled ? "VISTA is thinking..." : "Ask anything about your knowledge base..."}
             disabled={disabled}
-            className="w-full resize-none bg-transparent text-white placeholder-white/40 focus:outline-none text-sm leading-relaxed py-2 max-h-[200px] scrollbar-glass"
+            className="w-full resize-none glass-input text-foreground placeholder:text-muted-foreground focus:outline-none text-sm leading-relaxed py-2 max-h-[200px] scrollbar-glass"
             rows={1}
             style={{ minHeight: "40px" }}
           />
@@ -81,7 +81,7 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
             <button
               onClick={handleSend}
               disabled={disabled}
-              className="glass-shine group relative overflow-hidden rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 p-2.5 text-white shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95"
+              className="glass-shine group relative overflow-hidden rounded-lg bg-primary p-2.5 text-primary-foreground shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95"
               title="Send message"
             >
               <Send className="h-5 w-5" />
@@ -93,9 +93,9 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
 
       {/* Character count or tips */}
       {input.length > 500 && (
-        <div className="border-t border-white/10 px-4 py-2">
+        <div className="border-t border-border px-4 py-2">
           <span className={`text-xs ${
-            input.length > 2000 ? "text-red-400" : "text-white/50"
+            input.length > 2000 ? "text-destructive" : "text-muted-foreground"
           }`}>
             {input.length} / 2000 characters
           </span>
@@ -105,10 +105,10 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
       {/* Keyboard shortcut hint */}
       {!input && (
         <div className="absolute bottom-4 right-4 pointer-events-none">
-          <span className="text-xs text-white/30">
-            <kbd className="px-1.5 py-0.5 glass-light rounded text-white/40 font-mono text-[10px]">Enter</kbd> to send
+          <span className="text-xs text-muted-foreground/70">
+            <kbd className="px-1.5 py-0.5 glass-light rounded text-muted-foreground font-mono text-[10px]">Enter</kbd> to send
             {" • "}
-            <kbd className="px-1.5 py-0.5 glass-light rounded text-white/40 font-mono text-[10px]">Shift+Enter</kbd> for new line
+            <kbd className="px-1.5 py-0.5 glass-light rounded text-muted-foreground font-mono text-[10px]">Shift+Enter</kbd> for new line
           </span>
         </div>
       )}

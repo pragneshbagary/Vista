@@ -177,6 +177,7 @@ class Config:
     
     # Query Configuration
     max_context_tokens: int = 3000
+    max_response_tokens: int = 500
     top_k_results: int = 5
     
     @classmethod
@@ -216,6 +217,7 @@ class Config:
         else:
             raise ValueError(f"Unsupported LLM provider: {llm_provider}")
         
+        
         llm_model = os.getenv("LLM_MODEL", default_model)
         
         return cls(
@@ -229,6 +231,7 @@ class Config:
             chunk_size=int(os.getenv("CHUNK_SIZE", "500")),
             chunk_overlap=int(os.getenv("CHUNK_OVERLAP", "50")),
             max_context_tokens=int(os.getenv("MAX_CONTEXT_TOKENS", "3000")),
+            max_response_tokens=int(os.getenv("MAX_RESPONSE_TOKENS", "500")),
             top_k_results=int(os.getenv("TOP_K_RESULTS", "5"))
         )
     
