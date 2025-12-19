@@ -26,40 +26,40 @@ export default function Message({ message, onEdit, onResend }) {
   }
 
   return (
-    <div className={`flex items-start gap-4 ${isUser ? "flex-row-reverse" : ""}`}>
+    <div className={`flex items-start gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
       {/* Avatar */}
-      <div className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full ${
+      <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-white/20 backdrop-blur-md ${
         isUser 
-          ? "bg-gradient-to-br from-primary to-secondary shadow-lg" 
-          : "bg-gradient-to-br from-primary to-accent shadow-lg"
+          ? "bg-gradient-to-br from-primary/40 to-secondary/40" 
+          : "bg-gradient-to-br from-primary/40 to-accent/40"
       }`}>
         {isUser ? (
-          <User className="h-5 w-5 text-primary-foreground" />
+          <User className="h-4 w-4 text-primary" />
         ) : (
-          <Bot className="h-5 w-5 text-primary-foreground" />
+          <Bot className="h-4 w-4 text-primary" />
         )}
       </div>
 
       {/* Message content */}
-      <div className={`group relative flex max-w-[80%] flex-col gap-2 ${isUser ? "items-end" : "items-start"}`}>
+      <div className={`group relative flex max-w-[75%] flex-col gap-2 ${isUser ? "items-end" : "items-start"}`}>
         {isEditing ? (
           <div className="glass-card glass-shadow w-full space-y-3 p-4">
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="glass-input w-full min-h-[100px] px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground resize-none"
+              className="glass-input w-full min-h-[100px] text-sm resize-none"
               autoFocus
             />
             <div className="flex gap-2 justify-end">
               <button
                 onClick={handleCancelEdit}
-                className="glass-button px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground"
+                className="glass-button px-3 py-1.5 text-xs"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="px-3 py-1.5 text-xs bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all"
+                className="glass-button-primary px-3 py-1.5 text-xs"
               >
                 Save
               </button>
@@ -67,12 +67,12 @@ export default function Message({ message, onEdit, onResend }) {
           </div>
         ) : (
           <>
-            <div className={`glass-card rounded-xl px-5 py-4 ${
+            <div className={`glass-card glass-shadow px-5 py-3.5 ${
               isUser
-                ? "bg-primary text-primary-foreground"
-                : "glass-card text-foreground"
+                ? "bg-primary/20 border-primary/30"
+                : ""
             }`}>
-              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+              <p className="text-sm leading-relaxed whitespace-pre-wrap break-words text-foreground">
                 {message.content}
               </p>
               
@@ -90,7 +90,7 @@ export default function Message({ message, onEdit, onResend }) {
             }`}>
               <button
                 onClick={handleCopy}
-                className="glass-button p-2 text-muted-foreground hover:text-foreground"
+                className="glass-button p-1.5 text-muted-foreground hover:text-foreground"
                 title="Copy message"
               >
                 {copied ? (
@@ -103,7 +103,7 @@ export default function Message({ message, onEdit, onResend }) {
               {isUser && onEdit && (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="glass-button p-2 text-muted-foreground hover:text-foreground"
+                  className="glass-button p-1.5 text-muted-foreground hover:text-foreground"
                   title="Edit message"
                 >
                   <Edit2 className="h-3.5 w-3.5" />
@@ -113,7 +113,7 @@ export default function Message({ message, onEdit, onResend }) {
               {isUser && onResend && (
                 <button
                   onClick={() => onResend(message.id)}
-                  className="glass-button p-2 text-muted-foreground hover:text-foreground"
+                  className="glass-button p-1.5 text-muted-foreground hover:text-foreground"
                   title="Resend message"
                 >
                   <RotateCcw className="h-3.5 w-3.5" />
@@ -124,7 +124,7 @@ export default function Message({ message, onEdit, onResend }) {
         )}
 
         {/* Timestamp */}
-        <div className={`text-xs text-muted-foreground ${isUser ? "text-right" : ""}`}>
+        <div className={`text-xs text-muted-foreground/70 ${isUser ? "text-right" : ""}`}>
           {new Date(message.createdAt).toLocaleTimeString([], { 
             hour: '2-digit', 
             minute: '2-digit' 

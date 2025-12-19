@@ -48,67 +48,42 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
   }
 
   return (
-    <div className="glass-card glass-shadow relative">
+    <div className="glass-card glass-shadow relative w-full">
       {/* Main input area */}
-      <div className="flex items-end gap-3 p-3">
-        {/* Attachment button */}
-        <button
-          className="glass-button flex-shrink-0 p-2 text-muted-foreground hover:text-foreground disabled:opacity-50"
-          disabled={disabled}
-          title="Attach file"
-        >
-          <Paperclip className="h-5 w-5" />
-        </button>
-
+      <div className="flex items-center gap-3 p-3">
         {/* Textarea */}
-        <div className="flex-1 relative">
+        <div className="flex-1 relative min-w-0">
           <textarea
             ref={textareaRef}
             value={input}
             onChange={handleInput}
             onKeyDown={handleKeyDown}
-            placeholder={disabled ? "VISTA is thinking..." : "Ask anything about your knowledge base..."}
+            placeholder={disabled ? "VISTA is thinking..." : "Ask anything..."}
             disabled={disabled}
-            className="w-full resize-none glass-input text-foreground placeholder:text-muted-foreground focus:outline-none text-sm leading-relaxed py-2 max-h-[200px] scrollbar-glass"
+            className="w-full resize-none glass-input text-foreground placeholder:text-muted-foreground focus:outline-none text-sm leading-relaxed max-h-[150px]"
             rows={1}
-            style={{ minHeight: "40px" }}
+            style={{ minHeight: "44px" }}
           />
         </div>
 
-        {/* Voice/Send button */}
-        <div className="flex flex-shrink-0 gap-2">
-         
-            <button
-              onClick={handleSend}
-              disabled={disabled}
-              className="glass-shine group relative overflow-hidden rounded-lg bg-primary p-2.5 text-primary-foreground shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95"
-              title="Send message"
-            >
-              <Send className="h-5 w-5" />
-            </button>
-        </div>
+        {/* Send button */}
+        <button
+          onClick={handleSend}
+          disabled={disabled}
+          className="glass-shine group relative overflow-hidden flex-shrink-0 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 p-2.5 text-white shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 border border-blue-400/30"
+          title="Send message"
+        >
+          <Send className="h-4 w-4" />
+        </button>
       </div>
 
-
-
-      {/* Character count or tips */}
+      {/* Character count */}
       {input.length > 500 && (
-        <div className="border-t border-border px-4 py-2">
+        <div className="border-t border-white/10 px-4 py-2">
           <span className={`text-xs ${
             input.length > 2000 ? "text-destructive" : "text-muted-foreground"
           }`}>
             {input.length} / 2000 characters
-          </span>
-        </div>
-      )}
-
-      {/* Keyboard shortcut hint */}
-      {!input && (
-        <div className="absolute bottom-4 right-4 pointer-events-none">
-          <span className="text-xs text-muted-foreground/70">
-            <kbd className="px-1.5 py-0.5 glass-light rounded text-muted-foreground font-mono text-[10px]">Enter</kbd> to send
-            {" • "}
-            <kbd className="px-1.5 py-0.5 glass-light rounded text-muted-foreground font-mono text-[10px]">Shift+Enter</kbd> for new line
           </span>
         </div>
       )}

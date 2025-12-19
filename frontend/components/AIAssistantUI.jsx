@@ -164,7 +164,7 @@ export default function AIAssistantUI() {
       title: "New Chat",
       updatedAt: new Date().toISOString(),
       messageCount: 0,
-      preview: "Ask me anything about your knowledge base...",
+      preview: "Ask me anything",
       pinned: false,
       folder: "Work Projects",
       messages: [],
@@ -323,15 +323,24 @@ export default function AIAssistantUI() {
   const selected = conversations.find((c) => c.id === selectedId) || null
 
   return (
-    <div className="h-screen w-full bg-background text-foreground">
+    <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-950 dark:via-blue-950/20 dark:to-slate-950 text-foreground overflow-hidden">
+      {/* Animated background gradient */}
+      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-300/8 via-purple-200/5 to-indigo-300/8 dark:from-blue-500/5 dark:via-transparent dark:to-indigo-500/5 pointer-events-none" />
+      
       {/* VISTA Status Banner - Only show if offline */}
       {vistaStatus === "offline" && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-destructive text-destructive-foreground px-4 py-2 text-center text-sm font-medium">
-          ⚠️ VISTA BACKEND IS CURRENTLY OFFLINE
+        <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 rounded-xl 
+  border border-red-500/40 
+  bg-gradient-to-r from-red-900/30 via-red-800/20 to-rose-900/30 
+  backdrop-blur-xl shadow-lg 
+  px-6 py-3 text-center text-sm font-medium whitespace-nowrap 
+  text-red-300">
+
+          ⚠️ VISTA Backend is offline. Please start the API server.
         </div>
       )}
 
-      <div className="md:hidden sticky top-0 z-40 flex items-center gap-2 border-b border-border bg-background/80 px-3 py-2 backdrop-blur-lg">
+      <div className="md:hidden sticky top-0 z-40 flex items-center gap-2 border-b border-white/10 bg-white/5 backdrop-blur-lg px-3 py-2">
         <div className="ml-1 flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground">
           <span className="inline-flex h-4 w-4 items-center justify-center">✱</span> VISTA Assistant
           {/* Status indicator */}
@@ -355,7 +364,7 @@ export default function AIAssistantUI() {
         </div>
       </div>
 
-      <div className={`mx-auto flex h-[calc(100vh-0px)] max-w-[1400px] ${vistaStatus === "offline" ? "mt-10" : ""}`}>
+      <div className="mx-auto flex h-[calc(100vh-0px)] max-w-[1400px]">
         {/* <Sidebar
           open={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
@@ -388,7 +397,9 @@ export default function AIAssistantUI() {
             createNewChat={createNewChat} 
             sidebarCollapsed={sidebarCollapsed} 
             setSidebarOpen={setSidebarOpen}
-            vistaStatus={vistaStatus} // Pass status to header
+            vistaStatus={vistaStatus}
+            theme={theme}
+            setTheme={setTheme}
           />
           <ChatPane
             ref={composerRef}
