@@ -2,9 +2,23 @@ import React from "react"
 import { Menu, PlusCircle, Sparkles } from "lucide-react"
 import ThemeToggle from "./ThemeToggle"
 
+
+
 export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen, vistaStatus, theme, setTheme }) {
   return (
-    <header className="sticky top-0 z-30 hidden glass-medium px-6 py-4 md:flex md:items-center md:justify-between border-b border-blue-200/30 bg-white/20 dark:border-white/10 dark:bg-white/3">
+    <header className="
+  sticky top-0 z-30 hidden md:flex md:items-center md:justify-between
+  px-6 py-4
+  backdrop-blur-xl
+  bg-white/60
+  border-b border-blue-300/40
+  shadow-sm
+  dark:bg-slate-900/75
+  dark:border-blue-500/40
+  dark:shadow-black/40
+">
+ 
+
       <div className="flex items-center gap-4">
         {sidebarCollapsed && (
           <button
@@ -18,7 +32,11 @@ export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen
         
         <div className="flex items-center gap-3">
           {/* Logo with glass effect */}
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400/40 to-indigo-400/40 backdrop-blur-md border border-white/20">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl
+  bg-gradient-to-br from-blue-500/40 to-indigo-500/40
+  backdrop-blur-md
+  border border-blue-400/30
+  shadow-sm">
             <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
           </div>
           
@@ -27,7 +45,7 @@ export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen
             
             {/* VISTA Status Indicator with glass effect */}
             {vistaStatus && (
-              <span className={`ml-1 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium glass-card ${
+              <span className={`ml-1 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-md shadow-sm ${
                 vistaStatus === "online" 
                   ? "border-green-500/30 bg-green-500/10" 
                   : vistaStatus === "offline"
@@ -69,6 +87,22 @@ export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen
           <span className="hidden sm:inline">New Chat</span>
         </button>
       </div>
+      {/* Bright rim */}
+<div className="
+  absolute inset-x-0 top-18.5 h-px
+  bg-gradient-to-r
+  from-transparent via-blue-600/80 to-transparent
+  dark:via-blue-400/100
+" />
+
+{/* Soft glow */}
+<div className="
+  absolute inset-x-0 top-19 h-2
+  bg-gradient-to-b
+  from-blue-300/20 to-transparent
+  dark:from-blue-500/20
+  pointer-events-none
+" />
     </header>
   )
 }

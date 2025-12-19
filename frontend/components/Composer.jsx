@@ -34,7 +34,7 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
 
   const handleInput = (e) => {
     setInput(e.target.value)
-    
+
     // Auto-resize textarea
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"
@@ -48,7 +48,7 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
   }
 
   return (
-    <div className="glass-card glass-shadow relative w-full">
+    <div>
       {/* Main input area */}
       <div className="flex items-center gap-3 p-3">
         {/* Textarea */}
@@ -58,11 +58,19 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
             value={input}
             onChange={handleInput}
             onKeyDown={handleKeyDown}
-            placeholder={disabled ? "VISTA is thinking..." : "Ask anything..."}
-            disabled={disabled}
-            className="w-full resize-none glass-input text-foreground placeholder:text-muted-foreground focus:outline-none text-sm leading-relaxed max-h-[150px]"
             rows={1}
-            style={{ minHeight: "44px" }}
+            disabled={disabled}
+            placeholder={disabled ? "VISTA is thinking..." : "Ask anything..."}
+            className="
+    glass-input
+    w-full
+    min-h-[44px]
+    max-h-[150px]
+    resize-none
+    text-sm
+    leading-relaxed
+    placeholder:text-muted-foreground
+  "
           />
         </div>
 
@@ -80,9 +88,8 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
       {/* Character count */}
       {input.length > 500 && (
         <div className="border-t border-white/10 px-4 py-2">
-          <span className={`text-xs ${
-            input.length > 2000 ? "text-destructive" : "text-muted-foreground"
-          }`}>
+          <span className={`text-xs ${input.length > 2000 ? "text-destructive" : "text-muted-foreground"
+            }`}>
             {input.length} / 2000 characters
           </span>
         </div>

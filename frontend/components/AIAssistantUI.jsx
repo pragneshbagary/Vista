@@ -21,6 +21,8 @@ export default function AIAssistantUI() {
     return "light"
   })
 
+  const [isAnimating, setIsAnimating] = useState(false)
+
   // VISTA Backend Status
   const [vistaStatus, setVistaStatus] = useState("checking")
 
@@ -47,11 +49,21 @@ export default function AIAssistantUI() {
 
   useEffect(() => {
     try {
-      if (theme === "dark") document.documentElement.classList.add("dark")
-      else document.documentElement.classList.remove("dark")
-      document.documentElement.setAttribute("data-theme", theme)
-      document.documentElement.style.colorScheme = theme
-      localStorage.setItem("theme", theme)
+      setIsAnimating(true)
+      
+      // Trigger animation
+      setTimeout(() => {
+        if (theme === "dark") document.documentElement.classList.add("dark")
+        else document.documentElement.classList.remove("dark")
+        document.documentElement.setAttribute("data-theme", theme)
+        document.documentElement.style.colorScheme = theme
+        localStorage.setItem("theme", theme)
+      }, 300)
+      
+      // End animation
+      setTimeout(() => {
+        setIsAnimating(false)
+      }, 600)
     } catch {}
   }, [theme])
 
@@ -323,9 +335,17 @@ export default function AIAssistantUI() {
   const selected = conversations.find((c) => c.id === selectedId) || null
 
   return (
-    <div className="h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 dark:from-slate-950 dark:via-blue-950/20 dark:to-slate-950 text-foreground overflow-hidden">
+    <div className={`h-screen w-full 
+  bg-gradient-to-br 
+  from-blue-200 via-blue-100 to-cyan-100
+  dark:from-slate-950 dark:via-blue-950/30 dark:to-slate-950
+  text-foreground overflow-hidden ${isAnimating ? "theme-transition" : ""}`}>
       {/* Animated background gradient */}
-      <div className="fixed inset-0 -z-10 bg-gradient-to-br from-blue-300/8 via-purple-200/5 to-indigo-300/8 dark:from-blue-500/5 dark:via-transparent dark:to-indigo-500/5 pointer-events-none" />
+      <div className="fixed inset-0 -z-10 
+  bg-gradient-to-br 
+ from-blue-300/25 via-white/10 to-cyan-300/20
+  dark:from-blue-500/10 dark:via-transparent dark:to-indigo-500/10
+  pointer-events-none" />
       
       {/* VISTA Status Banner - Only show if offline */}
       {vistaStatus === "offline" && (

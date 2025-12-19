@@ -119,10 +119,52 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-gradient-to-br from-background via-background to-background text-foreground;
+    transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1), color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
+
+@keyframes themeGlassFade {
+  0% {
+    filter: blur(0px);
+  }
+  50% {
+    filter: blur(4px);
+  }
+  100% {
+    filter: blur(0px);
+  }
+}
+/* @keyframes themeDepthShift {
+  0% {
+    transform: translateZ(0) scale(1);
+    opacity: 1;
+  }
+  40% {
+    transform: translateZ(-20px) scale(0.985);
+    opacity: 0.92;
+  }
+  100% {
+    transform: translateZ(0) scale(1);
+    opacity: 1;
+  }
+} */
+
+.theme-transition {
+  animation:
+    themeGlassFade 0.45s ease-in-out;
+    /* themeDepthShift 0.5s cubic-bezier(0.22, 1, 0.36, 1); */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-transition {
+    animation: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
 
 /* Glassmorphism utilities */
 @layer components {
@@ -139,8 +181,23 @@
   }
 
   .glass-input {
-    @apply rounded-xl border border-blue-200/40 bg-white/50 backdrop-blur-md px-4 py-2.5 text-foreground placeholder:text-slate-500 focus:border-blue-300/60 focus:outline-none focus:ring-2 focus:ring-blue-400/30 transition-all;
+    @apply bg-white/40 backdrop-blur-md border border-blue-300/30 rounded-lg px-3 py-2 text-foreground outline-none transition-all duration-200 overflow-hidden;
   }
+
+  .glass-input:focus {
+    border-color: rgb(59 130 246 / 0.4);
+    /* blue-500/40 */
+    box-shadow: 0 0 0 1px rgb(59 130 246 / 0.25);
+  }
+
+  .glass-input:hover {
+  border-color: rgb(59 130 246 / 0.25);
+}
+.glass-input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 
   .dark .glass-input {
     @apply border-white/20 bg-white/10 placeholder:text-muted-foreground focus:border-white/40 focus:ring-primary/20;
