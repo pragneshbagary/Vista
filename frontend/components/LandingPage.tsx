@@ -1,5 +1,6 @@
 import React from "react"
 import { ArrowRight, Github, Linkedin, Sparkles, MessageSquare, Brain, Zap } from "lucide-react"
+import LogoShowcase from "./LogoShowcase"
 
 interface LandingPageProps {
   onEnter: () => void
@@ -14,10 +15,8 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
       {/* Navigation */}
       <nav className="sticky top-0 z-40 border-b border-blue-200/30 bg-white/20 dark:border-white/10 dark:bg-white/3 backdrop-blur-xl">
         <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400/40 to-indigo-400/40 backdrop-blur-md border border-white/20">
-              <Sparkles className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            </div>
+        <div className="flex items-center gap-3">
+            <img src="/vista_logo.png" alt="VISTA Logo" className="h-8 w-8 object-contain" />
             <span className="text-lg font-bold tracking-tight">VISTA</span>
           </div>
           <button
@@ -30,7 +29,10 @@ export default function LandingPage({ onEnter }: LandingPageProps) {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Logo Showcase Section - Hero */}
+      <LogoShowcase />
+
+      {/* Features Section */}
       <div className="relative mx-auto max-w-6xl px-6 py-20 md:py-32">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Left Content */}

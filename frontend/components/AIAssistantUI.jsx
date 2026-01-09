@@ -7,6 +7,7 @@ import Header from "./Header"
 import ChatPane from "./ChatPane"
 import GhostIconButton from "./GhostIconButton"
 import ThemeToggle from "./ThemeToggle"
+import LLMSelector from "./LLMSelector"
 import { INITIAL_CONVERSATIONS, INITIAL_TEMPLATES, INITIAL_FOLDERS } from "./mockData"
 
 // VISTA API Configuration
@@ -22,6 +23,24 @@ export default function AIAssistantUI() {
   })
 
   const [isAnimating, setIsAnimating] = useState(false)
+
+  // Random avatar selection for user
+  const [userAvatar, setUserAvatar] = useState(() => {
+    if (typeof window === "undefined") return null
+    
+    const avatars = [
+      "001-bear.png", "002-tiger.png", "003-lion.png", "004-penguin.png",
+      "005-koala.png", "006-dog.png", "007-giraffe.png", "008-panda.png",
+      "009-rabbit.png", "010-pig.png", "011-dog.png", "012-zebra.png",
+      "013-horse.png", "014-pig.png", "015-monkey.png", "016-monkey.png"
+    ]
+    const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)]
+    return randomAvatar
+  })
+
+  // LLM Selection - Set to false to hide the selector
+  const [showLLMSelector, setShowLLMSelector] = useState(true)
+  const [selectedLLM, setSelectedLLM] = useState("gemini")
 
   // VISTA Backend Status
   const [vistaStatus, setVistaStatus] = useState("checking")
@@ -235,6 +254,7 @@ export default function AIAssistantUI() {
         },
         body: JSON.stringify({
           message: content,
+          llm_provider: selectedLLM,
         }),
       })
 
@@ -350,7 +370,7 @@ export default function AIAssistantUI() {
       {/* VISTA Status Banner - Only show if offline */}
       {vistaStatus === "offline" && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 rounded-xl 
-  border border-red-500/60 
+  border border-red-500/60
   bg-gradient-to-r from-red-100/80 via-red-50/70 to-rose-100/80
   dark:from-red-900/30 dark:via-red-800/20 dark:to-rose-900/30
   backdrop-blur-xl shadow-lg 
@@ -421,6 +441,9 @@ export default function AIAssistantUI() {
             vistaStatus={vistaStatus}
             theme={theme}
             setTheme={setTheme}
+            showLLMSelector={showLLMSelector}
+            selectedLLM={selectedLLM}
+            onLLMChange={setSelectedLLM}
           />
           <ChatPane
             ref={composerRef}
@@ -430,6 +453,9 @@ export default function AIAssistantUI() {
             onResendMessage={(messageId) => selected && resendMessage(selected.id, messageId)}
             isThinking={isThinking && thinkingConvId === selected?.id}
             onPauseThinking={pauseThinking}
+            theme={theme}
+            userAvatar={userAvatar}
+            selectedLLM={selectedLLM}
           />
         </main>
       </div>

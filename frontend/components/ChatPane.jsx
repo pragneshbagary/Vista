@@ -9,7 +9,10 @@ const ChatPane = forwardRef(({
   onEditMessage, 
   onResendMessage, 
   isThinking, 
-  onPauseThinking 
+  onPauseThinking,
+  theme = "light",
+  userAvatar,
+  selectedLLM
 }, ref) => {
   const messagesEndRef = useRef(null)
   const composerRef = useRef(null)
@@ -67,20 +70,27 @@ const ChatPane = forwardRef(({
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
+      {/* Background Logo - Blurred when conversation is active */}
+      <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 ${
+        messages.length > 0 ? (theme === 'dark' ? 'opacity-50 blur-sm' : 'opacity-25 blur-sm') : 'opacity-0'
+      }`}>
+        <img 
+          src="/vista_logo.png" 
+          alt="VISTA Logo Background" 
+          className="h-96 w-96 object-contain"
+        />
+      </div>
+      
       {/* Messages area */}
       <div className="relative z-10 flex-1 overflow-y-auto px-6 py-8 pb-24 scrollbar-glass">
         <div className="mx-auto max-w-3xl space-y-6 pb-4">
           {messages.length === 0 ? (
             <div className="flex h-full min-h-[400px] items-center justify-center">
-              <div className="glass-card glass-shadow max-w-md space-y-6 p-10 text-center text-foreground">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/40 to-accent/40 backdrop-blur-md border border-white/20">
-                  <Bot className="h-8 w-8 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Start the conversation</h3>
-                  <p className="text-xs text-muted-foreground">Ask me anything about your background</p>
-                </div>
-              </div>
+              <img 
+                src="/vista_logo.png" 
+                alt="VISTA Logo" 
+                className="h-80 w-80 object-contain drop-shadow-lg opacity-100 transition-all duration-300"
+              />
             </div>
           ) : (
             <>
@@ -90,6 +100,7 @@ const ChatPane = forwardRef(({
                   message={message}
                   onEdit={onEditMessage}
                   onResend={onResendMessage}
+                  userAvatar={userAvatar}
                 />
               ))}
               
