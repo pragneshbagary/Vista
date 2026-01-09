@@ -48,52 +48,39 @@ const Composer = forwardRef(({ onSend, disabled }, ref) => {
   }
 
   return (
-    <div>
-      {/* Main input area */}
-      <div className="flex items-center gap-3 p-3">
-        {/* Textarea */}
-        <div className="flex-1 relative min-w-0">
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={handleInput}
-            onKeyDown={handleKeyDown}
-            rows={1}
-            disabled={disabled}
-            placeholder={disabled ? "VISTA is thinking..." : "Ask anything..."}
-            className="
-    glass-input
-    w-full
-    min-h-[44px]
-    max-h-[150px]
-    resize-none
-    text-sm
-    leading-relaxed
-    placeholder:text-muted-foreground
-  "
-          />
-        </div>
-
-        {/* Send button */}
-        <button
-          onClick={handleSend}
+    <div className="flex items-center gap-3">
+      {/* Textarea */}
+      <div className="flex-1 relative min-w-0">
+        <textarea
+          ref={textareaRef}
+          value={input}
+          onChange={handleInput}
+          onKeyDown={handleKeyDown}
+          rows={1}
           disabled={disabled}
-          className="glass-shine group relative overflow-hidden flex-shrink-0 rounded-lg bg-gradient-to-br from-blue-500 to-blue-600 p-2.5 text-white shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 border border-blue-400/30"
-          title="Send message"
-        >
-          <Send className="h-4 w-4" />
-        </button>
+          placeholder={disabled ? "VISTA is thinking..." : "Ask anything..."}
+          className="
+  glass-input
+  w-full
+  min-h-[44px]
+  max-h-[150px]
+  resize-none
+  text-sm
+  leading-relaxed
+  placeholder:text-muted-foreground
+"
+        />
       </div>
 
-      {/* Character count */}
-      {input.length > 500 && (
-        <div className="border-t border-white/10 px-4 py-2">
-          <span className={`text-xs ${input.length > 2000 ? "text-destructive" : "text-muted-foreground"
-            }`}>
-            {input.length} / 2000 characters
-          </span>
-        </div>
-      )}
+      {/* Send button */}
+      <button
+        onClick={handleSend}
+        disabled={disabled}
+        className="glass-shine group relative overflow-hidden flex-shrink-0 rounded-lg bg-gradient-to-br from-gray-600 to-gray-700 p-2.5 text-white shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all hover:scale-105 active:scale-95 border border-gray-500/30"
+        title="Send message"
+      >
+        <Send className="h-4 w-4" />
+      </button>
     </div>
   )
 })

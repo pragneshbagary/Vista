@@ -337,24 +337,25 @@ export default function AIAssistantUI() {
   return (
     <div className={`h-screen w-full 
   bg-gradient-to-br 
-  from-blue-200 via-blue-100 to-cyan-100
-  dark:from-slate-950 dark:via-blue-950/30 dark:to-slate-950
+  from-white via-gray-50 to-gray-100
+  dark:from-black dark:via-gray-950 dark:to-gray-900
   text-foreground overflow-hidden ${isAnimating ? "theme-transition" : ""}`}>
       {/* Animated background gradient */}
       <div className="fixed inset-0 -z-10 
   bg-gradient-to-br 
- from-blue-300/25 via-white/10 to-cyan-300/20
-  dark:from-blue-500/10 dark:via-transparent dark:to-indigo-500/10
+  from-gray-200/20 via-white/10 to-gray-300/15
+  dark:from-gray-800/20 dark:via-transparent dark:to-gray-800/15
   pointer-events-none" />
       
       {/* VISTA Status Banner - Only show if offline */}
       {vistaStatus === "offline" && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 rounded-xl 
-  border border-red-500/40 
-  bg-gradient-to-r from-red-900/30 via-red-800/20 to-rose-900/30 
+  border border-red-500/60 
+  bg-gradient-to-r from-red-100/80 via-red-50/70 to-rose-100/80
+  dark:from-red-900/30 dark:via-red-800/20 dark:to-rose-900/30
   backdrop-blur-xl shadow-lg 
   px-6 py-3 text-center text-sm font-medium whitespace-nowrap 
-  text-red-300">
+  text-red-700 dark:text-red-300">
 
           ⚠️ VISTA Backend is offline. Please start the API server.
         </div>

@@ -8,7 +8,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'VISTA',
-  description: 'Created by Pragnesh Bagary',
+  description: 'Vector-Integrated Semantic Text Assistant',
   icons: {
     icon: [
       {

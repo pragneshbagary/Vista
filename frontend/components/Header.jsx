@@ -6,18 +6,27 @@ import ThemeToggle from "./ThemeToggle"
 
 export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen, vistaStatus, theme, setTheme }) {
   return (
-    <header className="
-  sticky top-0 z-30 hidden md:flex md:items-center md:justify-between
-  px-6 py-4
+    <header className="sticky top-0 z-30 hidden md:flex md:items-center md:justify-between
+  mx-4 mt-4 mb-4 px-6 py-4
+  rounded-2xl
+  shadow-lg
+  relative
+  bg-gray-200/60 dark:bg-white/8
+  border border-gray-300/40 dark:border-white/20
   backdrop-blur-xl
-  bg-white/60
-  border-b border-blue-300/40
-  shadow-sm
-  dark:bg-slate-900/75
-  dark:border-blue-500/40
-  dark:shadow-black/40
 ">
- 
+      {/* Glow rim effect - bright white edge at top */}
+      <div className="absolute inset-x-0 top-0 h-px
+  bg-gradient-to-r from-transparent via-gray-400/60 to-transparent
+  dark:via-white/30
+  rounded-t-2xl" />
+
+      {/* Soft glow effect - subtle white glow below rim */}
+      <div className="absolute inset-x-0 top-px h-2
+  bg-gradient-to-b from-gray-300/30 to-transparent
+  dark:from-white/10
+  pointer-events-none
+  rounded-t-2xl" />
 
       <div className="flex items-center gap-4">
         {sidebarCollapsed && (
@@ -33,11 +42,11 @@ export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen
         <div className="flex items-center gap-3">
           {/* Logo with glass effect */}
           <div className="flex h-9 w-9 items-center justify-center rounded-xl
-  bg-gradient-to-br from-blue-500/40 to-indigo-500/40
+  bg-gradient-to-br from-gray-400/40 to-gray-500/40
   backdrop-blur-md
-  border border-blue-400/30
+  border border-gray-400/30
   shadow-sm">
-            <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            <Sparkles className="h-4 w-4 text-gray-600 dark:text-gray-400" />
           </div>
           
           <div className="flex items-center gap-3 text-sm font-semibold tracking-tight text-foreground">
@@ -80,29 +89,13 @@ export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen
         {/* New Chat Button with glass effect */}
         <button
           onClick={createNewChat}
-          className="glass-shine group relative overflow-hidden rounded-lg flex items-center gap-2 px-4 py-2.5 text-sm font-medium bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 border border-blue-400/30"
+          className="glass-shine group relative overflow-hidden rounded-lg flex items-center gap-2 px-4 py-2.5 text-sm font-medium bg-gradient-to-br from-gray-600 to-gray-700 text-white shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95 border border-gray-500/30"
           aria-label="New Chat"
         >
           <PlusCircle className="h-4 w-4" />
           <span className="hidden sm:inline">New Chat</span>
         </button>
       </div>
-      {/* Bright rim */}
-<div className="
-  absolute inset-x-0 top-18.5 h-px
-  bg-gradient-to-r
-  from-transparent via-blue-600/80 to-transparent
-  dark:via-blue-400/100
-" />
-
-{/* Soft glow */}
-<div className="
-  absolute inset-x-0 top-19 h-2
-  bg-gradient-to-b
-  from-blue-300/20 to-transparent
-  dark:from-blue-500/20
-  pointer-events-none
-" />
     </header>
   )
 }
