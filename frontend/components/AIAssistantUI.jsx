@@ -1,14 +1,9 @@
 "use client"
 
-import React, { useEffect, useMemo, useRef, useState } from "react"
-import { Calendar, LayoutGrid, MoreHorizontal } from "lucide-react"
-import Sidebar from "./Sidebar"
+import React, { useEffect, useRef, useState } from "react"
 import Header from "./Header"
 import ChatPane from "./ChatPane"
-import GhostIconButton from "./GhostIconButton"
 import ThemeToggle from "./ThemeToggle"
-import LLMSelector from "./LLMSelector"
-import { INITIAL_CONVERSATIONS, INITIAL_TEMPLATES, INITIAL_FOLDERS } from "./mockData"
 
 // VISTA API Configuration
 const VISTA_API_URL = process.env.NEXT_PUBLIC_VISTA_API_URL || "http://localhost:8000"
@@ -25,7 +20,7 @@ export default function AIAssistantUI() {
   const [isAnimating, setIsAnimating] = useState(false)
 
   // Random avatar selection for user
-  const [userAvatar, setUserAvatar] = useState(() => {
+  const [userAvatar] = useState(() => {
     if (typeof window === "undefined") return null
     
     const avatars = [
@@ -34,12 +29,11 @@ export default function AIAssistantUI() {
       "009-rabbit.png", "010-pig.png", "011-dog.png", "012-zebra.png",
       "013-horse.png", "014-pig.png", "015-monkey.png", "016-monkey.png"
     ]
-    const randomAvatar = avatars[Math.floor(Math.random() * avatars.length)]
-    return randomAvatar
+    return avatars[Math.floor(Math.random() * avatars.length)]
   })
 
-  // LLM Selection - Set to false to hide the selector
-  const [showLLMSelector, setShowLLMSelector] = useState(true)
+  // LLM Selection
+  const [showLLMSelector] = useState(true)
   const [selectedLLM, setSelectedLLM] = useState("gemini")
 
   // VISTA Backend Status
@@ -62,7 +56,7 @@ export default function AIAssistantUI() {
     }
 
     checkVistaHealth()
-    const interval = setInterval(checkVistaHealth, 30000) // Check every 30 seconds
+    const interval = setInterval(checkVistaHealth, 30000)
     return () => clearInterval(interval)
   }, [])
 
@@ -70,7 +64,6 @@ export default function AIAssistantUI() {
     try {
       setIsAnimating(true)
       
-      // Trigger animation
       setTimeout(() => {
         if (theme === "dark") document.documentElement.classList.add("dark")
         else document.documentElement.classList.remove("dark")
@@ -79,7 +72,6 @@ export default function AIAssistantUI() {
         localStorage.setItem("theme", theme)
       }, 300)
       
-      // End animation
       setTimeout(() => {
         setIsAnimating(false)
       }, 600)
@@ -99,95 +91,15 @@ export default function AIAssistantUI() {
     } catch {}
   }, [])
 
-  const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [collapsed, setCollapsed] = useState(() => {
-    try {
-      const raw = localStorage.getItem("sidebar-collapsed")
-      return raw ? JSON.parse(raw) : { pinned: true, recent: false, folders: true, templates: true }
-    } catch {
-      return { pinned: true, recent: false, folders: true, templates: true }
-    }
-  })
-  useEffect(() => {
-    try {
-      localStorage.setItem("sidebar-collapsed", JSON.stringify(collapsed))
-    } catch {}
-  }, [collapsed])
-
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    try {
-      const saved = localStorage.getItem("sidebar-collapsed-state")
-      return saved ? JSON.parse(saved) : false
-    } catch {
-      return false
-    }
-  })
-
-  useEffect(() => {
-    try {
-      localStorage.setItem("sidebar-collapsed-state", JSON.stringify(sidebarCollapsed))
-    } catch {}
-  }, [sidebarCollapsed])
-
-  const [conversations, setConversations] = useState(INITIAL_CONVERSATIONS)
+  const [conversations, setConversations] = useState([])
   const [selectedId, setSelectedId] = useState(null)
-  const [templates, setTemplates] = useState(INITIAL_TEMPLATES)
-  const [folders, setFolders] = useState(INITIAL_FOLDERS)
-
-  const [query, setQuery] = useState("")
-  const searchRef = useRef(null)
 
   const [isThinking, setIsThinking] = useState(false)
   const [thinkingConvId, setThinkingConvId] = useState(null)
 
-  useEffect(() => {
-    const onKey = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "n") {
-        e.preventDefault()
-        createNewChat()
-      }
-      if (!e.metaKey && !e.ctrlKey && e.key === "/") {
-        const tag = document.activeElement?.tagName?.toLowerCase()
-        if (tag !== "input" && tag !== "textarea") {
-          e.preventDefault()
-          searchRef.current?.focus()
-        }
-      }
-      if (e.key === "Escape" && sidebarOpen) setSidebarOpen(false)
-    }
-    window.addEventListener("keydown", onKey)
-    return () => window.removeEventListener("keydown", onKey)
-  }, [sidebarOpen, conversations])
+  const composerRef = useRef(null)
 
-  useEffect(() => {
-    if (!selectedId && conversations.length > 0) {
-      createNewChat()
-    }
-  }, [])
-
-  const filtered = useMemo(() => {
-    if (!query.trim()) return conversations
-    const q = query.toLowerCase()
-    return conversations.filter((c) => c.title.toLowerCase().includes(q) || c.preview.toLowerCase().includes(q))
-  }, [conversations, query])
-
-  const pinned = filtered.filter((c) => c.pinned).sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
-
-  const recent = filtered
-    .filter((c) => !c.pinned)
-    .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1))
-    .slice(0, 10)
-
-  const folderCounts = React.useMemo(() => {
-    const map = Object.fromEntries(folders.map((f) => [f.name, 0]))
-    for (const c of conversations) if (map[c.folder] != null) map[c.folder] += 1
-    return map
-  }, [conversations, folders])
-
-  function togglePin(id) {
-    setConversations((prev) => prev.map((c) => (c.id === id ? { ...c, pinned: !c.pinned } : c)))
-  }
-
+  // Create new chat function
   function createNewChat() {
     const id = Math.random().toString(36).slice(2)
     const item = {
@@ -196,27 +108,23 @@ export default function AIAssistantUI() {
       updatedAt: new Date().toISOString(),
       messageCount: 0,
       preview: "Ask me anything",
-      pinned: false,
-      folder: "Work Projects",
       messages: [],
     }
     setConversations((prev) => [item, ...prev])
     setSelectedId(id)
-    setSidebarOpen(false)
   }
 
-  function createFolder() {
-    const name = prompt("Folder name")
-    if (!name) return
-    if (folders.some((f) => f.name.toLowerCase() === name.toLowerCase())) return alert("Folder already exists.")
-    setFolders((prev) => [...prev, { id: Math.random().toString(36).slice(2), name }])
-  }
+  // Initialize with a default chat
+  useEffect(() => {
+    if (conversations.length === 0 && !selectedId) {
+      createNewChat()
+    }
+  }, [])
 
-  // MODIFIED: Send message to VISTA API
+  // Send message to VISTA API
   async function sendMessage(convId, content) {
     if (!content.trim()) return
 
-    // Check if VISTA is online
     if (vistaStatus === "offline") {
       alert("VISTA backend is offline. Please start the API server.")
       return
@@ -225,7 +133,6 @@ export default function AIAssistantUI() {
     const now = new Date().toISOString()
     const userMsg = { id: Math.random().toString(36).slice(2), role: "user", content, createdAt: now }
 
-    // Add user message to conversation
     setConversations((prev) =>
       prev.map((c) => {
         if (c.id !== convId) return c
@@ -236,17 +143,15 @@ export default function AIAssistantUI() {
           updatedAt: now,
           messageCount: msgs.length,
           preview: content.slice(0, 80),
-          title: msgs.length === 1 ? content.slice(0, 40) : c.title, // Update title on first message
+          title: msgs.length === 1 ? content.slice(0, 40) : c.title,
         }
       }),
     )
 
-    // Set thinking state
     setIsThinking(true)
     setThinkingConvId(convId)
 
     try {
-      // Call VISTA API
       const response = await fetch(`${VISTA_API_URL}/api/chat`, {
         method: "POST",
         headers: {
@@ -265,7 +170,6 @@ export default function AIAssistantUI() {
       const data = await response.json()
       const assistantContent = data.response || "No response received"
 
-      // Add assistant message to conversation
       setConversations((prev) =>
         prev.map((c) => {
           if (c.id !== convId) return c
@@ -288,7 +192,6 @@ export default function AIAssistantUI() {
     } catch (error) {
       console.error("Error calling VISTA API:", error)
 
-      // Add error message to conversation
       setConversations((prev) =>
         prev.map((c) => {
           if (c.id !== convId) return c
@@ -309,7 +212,6 @@ export default function AIAssistantUI() {
         }),
       )
     } finally {
-      // Clear thinking state
       setIsThinking(false)
       setThinkingConvId(null)
     }
@@ -344,14 +246,6 @@ export default function AIAssistantUI() {
     setThinkingConvId(null)
   }
 
-  function handleUseTemplate(template) {
-    if (composerRef.current) {
-      composerRef.current.insertTemplate(template.content)
-    }
-  }
-
-  const composerRef = useRef(null)
-
   const selected = conversations.find((c) => c.id === selectedId) || null
 
   return (
@@ -360,14 +254,12 @@ export default function AIAssistantUI() {
   from-white via-gray-50 to-gray-100
   dark:from-black dark:via-gray-950 dark:to-gray-900
   text-foreground overflow-hidden ${isAnimating ? "theme-transition" : ""}`}>
-      {/* Animated background gradient */}
       <div className="fixed inset-0 -z-10 
   bg-gradient-to-br 
   from-gray-200/20 via-white/10 to-gray-300/15
   dark:from-gray-800/20 dark:via-transparent dark:to-gray-800/15
   pointer-events-none" />
       
-      {/* VISTA Status Banner - Only show if offline */}
       {vistaStatus === "offline" && (
         <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 rounded-xl 
   border border-red-500/60
@@ -376,68 +268,16 @@ export default function AIAssistantUI() {
   backdrop-blur-xl shadow-lg 
   px-6 py-3 text-center text-sm font-medium whitespace-nowrap 
   text-red-700 dark:text-red-300">
-
           ⚠️ VISTA Backend is offline. Please start the API server.
         </div>
       )}
 
-      <div className="md:hidden sticky top-0 z-40 flex items-center gap-2 border-b border-white/10 bg-white/5 backdrop-blur-lg px-3 py-2">
-        <div className="ml-1 flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground">
-          <span className="inline-flex h-4 w-4 items-center justify-center">✱</span> VISTA Assistant
-          {/* Status indicator */}
-          <span className={`inline-flex h-2 w-2 rounded-full ${
-            vistaStatus === "online" ? "bg-green-500 animate-pulse" : 
-            vistaStatus === "offline" ? "bg-destructive" : 
-            "bg-yellow-500 animate-pulse"
-          }`}></span>
-        </div>
-        <div className="ml-auto flex items-center gap-2">
-          <GhostIconButton label="Schedule">
-            <Calendar className="h-4 w-4" />
-          </GhostIconButton>
-          <GhostIconButton label="Apps">
-            <LayoutGrid className="h-4 w-4" />
-          </GhostIconButton>
-          <GhostIconButton label="More">
-            <MoreHorizontal className="h-4 w-4" />
-          </GhostIconButton>
-          <ThemeToggle theme={theme} setTheme={setTheme} />
-        </div>
-      </div>
-
       <div className="mx-auto flex h-[calc(100vh-0px)] max-w-[1400px]">
-        {/* <Sidebar
-          open={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
-          theme={theme}
-          setTheme={setTheme}
-          collapsed={collapsed}
-          setCollapsed={setCollapsed}
-          sidebarCollapsed={sidebarCollapsed}
-          setSidebarCollapsed={setSidebarCollapsed}
-          conversations={conversations}
-          pinned={pinned}
-          recent={recent}
-          folders={folders}
-          folderCounts={folderCounts}
-          selectedId={selectedId}
-          onSelect={(id) => setSelectedId(id)}
-          togglePin={togglePin}
-          query={query}
-          setQuery={setQuery}
-          searchRef={searchRef}
-          createFolder={createFolder}
-          createNewChat={createNewChat}
-          templates={templates}
-          setTemplates={setTemplates}
-          onUseTemplate={handleUseTemplate}
-        /> */}
-
         <main className="relative flex min-w-0 flex-1 flex-col">
           <Header 
             createNewChat={createNewChat} 
-            sidebarCollapsed={sidebarCollapsed} 
-            setSidebarOpen={setSidebarOpen}
+            sidebarCollapsed={false}
+            setSidebarOpen={() => {}}
             vistaStatus={vistaStatus}
             theme={theme}
             setTheme={setTheme}

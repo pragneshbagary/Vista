@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { User, Bot, Copy, Check, RotateCcw, Edit2 } from "lucide-react"
+import { User, Copy, Check, RotateCcw, Edit2 } from "lucide-react"
 
 export default function Message({ message, onEdit, onResend, userAvatar }) {
   const [copied, setCopied] = useState(false)

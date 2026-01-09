@@ -1,5 +1,5 @@
 import React from "react"
-import { Menu, PlusCircle, Sparkles } from "lucide-react"
+import { Menu, PlusCircle } from "lucide-react"
 import ThemeToggle from "./ThemeToggle"
 import LLMSelector from "./LLMSelector"
 
