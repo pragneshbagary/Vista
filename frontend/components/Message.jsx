@@ -73,7 +73,7 @@ export default function Message({ message, onEdit, onResend, userAvatar }) {
           </div>
         ) : (
           <>
-            <div className={`glass-card glass-shadow px-4 py-2.5 rounded-lg ${
+            <div className={`glass-card glass-shadow px-3 py-1.5 rounded-lg ${
               isUser
                 ? "bg-primary/20 border-primary/30"
                 : ""
