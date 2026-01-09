@@ -68,7 +68,7 @@ const ChatPane = forwardRef(({
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
       {/* Messages area */}
-      <div className="relative z-10 flex-1 overflow-y-auto px-4 py-8 pb-24 scrollbar-glass">
+      <div className="relative z-10 flex-1 overflow-y-auto px-6 py-8 pb-24 scrollbar-glass">
         <div className="mx-auto max-w-3xl space-y-6 pb-4">
           {messages.length === 0 ? (
             <div className="flex h-full min-h-[400px] items-center justify-center">
@@ -124,26 +124,22 @@ const ChatPane = forwardRef(({
       </div>
 
       {/* Composer area with glass effect */}
-<div className="
-  relative z-10 flex-shrink-0
-  backdrop-blur-xl
+      <div className="relative z-10 flex-shrink-0 border-t border-gray-300/20 dark:border-white/10">
+        {/* Glass rim */}
+        
+        <div className="mx-auto max-w-3xl px-6 py-4">
+          {/* <div className="glass-card rounded-lg p-3 relative"> */}
+            {/* Glow rim effect - bright white edge at top */}
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gray-400/60 to-transparent dark:via-white/30 rounded-t-lg" />
 
-  border-t border-blue-300/40
-  bg-gradient-to-t from-cyan/70 to-white/40
-  shadow-[0_-6px_20px_rgba(59,130,246,0.12)]
-
-  dark:border-blue-500/20
-  dark:bg-gradient-to-t dark:from-slate-900/80 dark:to-slate-900/50
-  dark:shadow-[0_-6px_20px_rgba(0,0,0,0.5)]
-">
-  {/* Glass rim */}
-  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-blue-300/60 to-transparent dark:via-blue-400/80 pointer-events-none" />
-        <div className="mx-auto max-w-3xl px-4 py-4">
-          <Composer
-            ref={composerRef}
-            onSend={onSend}
-            disabled={isThinking}
-          />
+            {/* Soft glow effect - subtle white glow below rim */}
+            {/* <div className="absolute inset-x-0 top-px h-1 bg-gradient-to-b from-gray-300/30 to-transparent dark:from-white/10 pointer-events-none rounded-t-lg" /> */}
+            <Composer
+              ref={composerRef}
+              onSend={onSend}
+              disabled={isThinking}
+            />
+          {/* </div> */}
         </div>
       </div>
     </div>
