@@ -56,7 +56,7 @@ class LLMFactory:
         else:
             client = client_class(api_key=api_key)
         
-        logger.info(f"Created {provider} LLM client with model: {client.model_name}")
+        logger.info(f"Created {provider} LLM client with model: {getattr(client, 'model', None) or getattr(client, 'model_name', 'unknown')}")
         return client
     
     @classmethod
