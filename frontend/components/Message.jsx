@@ -1,7 +1,7 @@
 import React, { useState } from "react"
-import { User, Bot, Copy, Check, RotateCcw, Edit2 } from "lucide-react"
+import { User, Copy, Check, RotateCcw, Edit2 } from "lucide-react"
 
-export default function Message({ message, onEdit, onResend }) {
+export default function Message({ message, onEdit, onResend, userAvatar }) {
   const [copied, setCopied] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [editContent, setEditContent] = useState(message.content)
@@ -28,38 +28,44 @@ export default function Message({ message, onEdit, onResend }) {
   return (
     <div className={`flex items-start gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
       {/* Avatar */}
-      <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-white/20 backdrop-blur-md ${
-        isUser 
-          ? "bg-gradient-to-br from-primary/40 to-secondary/40" 
-          : "bg-gradient-to-br from-primary/40 to-accent/40"
-      }`}>
-        {isUser ? (
-          <User className="h-4 w-4 text-primary" />
+      <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl overflow-hidden">
+        {isUser && userAvatar ? (
+          <img 
+            src={`/avatars/${userAvatar}`} 
+            alt="User avatar" 
+            className="h-full w-full object-cover"
+          />
+        ) : !isUser ? (
+          <img 
+            src="/avatars/ai.png" 
+            alt="VISTA avatar" 
+            className="h-full w-full object-cover"
+          />
         ) : (
-          <Bot className="h-4 w-4 text-primary" />
+          <User className="h-4 w-4 text-primary" />
         )}
       </div>
 
       {/* Message content */}
       <div className={`group relative flex max-w-[75%] flex-col gap-2 ${isUser ? "items-end" : "items-start"}`}>
         {isEditing ? (
-          <div className="glass-card glass-shadow w-full space-y-3 p-4">
+          <div className="glass-card glass-shadow w-full space-y-2 p-3">
             <textarea
               value={editContent}
               onChange={(e) => setEditContent(e.target.value)}
-              className="glass-input w-full min-h-[100px] text-sm resize-none"
+              className="glass-input w-full min-h-[80px] text-sm resize-none"
               autoFocus
             />
             <div className="flex gap-2 justify-end">
               <button
                 onClick={handleCancelEdit}
-                className="glass-button px-3 py-1.5 text-xs"
+                className="glass-button px-3 py-1 text-xs"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSaveEdit}
-                className="glass-button-primary px-3 py-1.5 text-xs"
+                className="glass-button-primary px-3 py-1 text-xs"
               >
                 Save
               </button>
@@ -67,7 +73,7 @@ export default function Message({ message, onEdit, onResend }) {
           </div>
         ) : (
           <>
-            <div className={`glass-card glass-shadow px-5 py-3.5 ${
+            <div className={`glass-card glass-shadow px-3 py-1.5 rounded-lg ${
               isUser
                 ? "bg-primary/20 border-primary/30"
                 : ""

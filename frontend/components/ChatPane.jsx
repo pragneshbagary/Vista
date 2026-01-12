@@ -3,16 +3,48 @@ import { Bot, Sparkles } from "lucide-react"
 import Message from "./Message"
 import Composer from "./Composer"
 
+// Add CSS for animations
+const animationStyles = `
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+  }
+  
+  @keyframes subtle-glow {
+    0%, 100% { filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.3)); }
+    50% { filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.5)); }
+  }
+  
+  .logo-float {
+    animation: float 4s ease-in-out infinite;
+  }
+  
+  .logo-glow {
+    animation: subtle-glow 3s ease-in-out infinite;
+  }
+`
+
 const ChatPane = forwardRef(({ 
   conversation, 
   onSend, 
   onEditMessage, 
   onResendMessage, 
   isThinking, 
-  onPauseThinking 
+  onPauseThinking,
+  theme = "light",
+  userAvatar,
+  selectedLLM
 }, ref) => {
   const messagesEndRef = useRef(null)
   const composerRef = useRef(null)
+
+  // Inject animation styles
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = animationStyles
+    document.head.appendChild(style)
+    return () => document.head.removeChild(style)
+  }, [])
 
   // Expose methods to parent component
   useImperativeHandle(ref, () => ({
@@ -41,16 +73,16 @@ const ChatPane = forwardRef(({
             </div>
             <div className="space-y-4">
               <h2 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                Welcome to VISTA
+                VISTA
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Your personal AI assistant powered by your knowledge base. Start a new chat to begin asking questions.
+                Vector-Integrated Semantic Text Assistant. Ask me about my projects and experience.
               </p>
             </div>
             <div className="pt-4 space-y-3 text-xs text-muted-foreground">
               <p className="flex items-center justify-center gap-2">
                 <span>💡</span>
-                <span>Ask about your projects, skills, or experiences</span>
+                <span>Try asking about specific projects or technologies</span>
               </p>
               <p className="flex items-center justify-center gap-2">
                 <span>⌨️</span>
@@ -67,29 +99,37 @@ const ChatPane = forwardRef(({
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-hidden">
+      {/* Background Logo - Blurred when conversation is active */}
+      <div className={`absolute inset-0 flex items-center justify-center pointer-events-none transition-all duration-300 ${
+        messages.length > 0 ? (theme === 'dark' ? 'opacity-30 blur-sm' : 'opacity-15 blur-sm') : 'opacity-0'
+      }`}>
+        <img 
+          src="/vista_logo.png" 
+          alt="VISTA Logo Background" 
+          className="h-96 w-96 object-contain"
+        />
+      </div>
+      
       {/* Messages area */}
-      <div className="relative z-10 flex-1 overflow-y-auto px-6 py-8 pb-24 scrollbar-glass">
-        <div className="mx-auto max-w-3xl space-y-6 pb-4">
+      <div className="relative z-10 flex-1 overflow-y-auto px-6 py-8 pb-24 scrollbar-glass flex items-center justify-center">
+        <div className="mx-auto max-w-3xl w-full">
           {messages.length === 0 ? (
-            <div className="flex h-full min-h-[400px] items-center justify-center">
-              <div className="glass-card glass-shadow max-w-md space-y-6 p-10 text-center text-foreground">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/40 to-accent/40 backdrop-blur-md border border-white/20">
-                  <Bot className="h-8 w-8 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold mb-2">Start the conversation</h3>
-                  <p className="text-xs text-muted-foreground">Ask me anything about your background</p>
-                </div>
-              </div>
+            <div className="flex items-center justify-center">
+              <img 
+                src="/vista_logo.png" 
+                alt="VISTA Logo" 
+                className="h-80 w-80 object-contain drop-shadow-lg opacity-100 transition-all duration-300 logo-float logo-glow"
+              />
             </div>
           ) : (
-            <>
+            <div className="space-y-6 pb-4">
               {messages.map((message) => (
                 <Message
                   key={message.id}
                   message={message}
                   onEdit={onEditMessage}
                   onResend={onResendMessage}
+                  userAvatar={userAvatar}
                 />
               ))}
               
@@ -117,7 +157,7 @@ const ChatPane = forwardRef(({
                   </div>
                 </div>
               )}
-            </>
+            </div>
           )}
           <div ref={messagesEndRef} />
         </div>

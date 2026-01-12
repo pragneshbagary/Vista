@@ -40,13 +40,13 @@ chroma_db/
 PERSIST_DIRECTORY/
 */chroma_db/
 
-# Your data directory (your private documents)
+#data directory
 data/
 DATA_DIRECTORY/
 */data/
 prompts/
+frontend/public
 
-# If your embedding script generates outputs
 outputs/
 results/
 
@@ -155,6 +155,7 @@ swc/
 *.tsbuildinfo
 
 # Testing
+coverage/
 coverage/
 
 

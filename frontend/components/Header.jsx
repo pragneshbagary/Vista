@@ -1,10 +1,11 @@
 import React from "react"
-import { Menu, PlusCircle, Sparkles } from "lucide-react"
+import { Menu, PlusCircle } from "lucide-react"
 import ThemeToggle from "./ThemeToggle"
+import LLMSelector from "./LLMSelector"
 
 
 
-export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen, vistaStatus, theme, setTheme }) {
+export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen, vistaStatus, theme, setTheme, showLLMSelector, selectedLLM, onLLMChange }) {
   return (
     <header className="sticky top-0 z-30 hidden md:flex md:items-center md:justify-between
   mx-4 mt-4 mb-4 px-6 py-4
@@ -40,14 +41,8 @@ export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen
         )}
         
         <div className="flex items-center gap-3">
-          {/* Logo with glass effect */}
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl
-  bg-gradient-to-br from-gray-400/40 to-gray-500/40
-  backdrop-blur-md
-  border border-gray-400/30
-  shadow-sm">
-            <Sparkles className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-          </div>
+          {/* Logo */}
+          <img src="/vista_logo.svg" alt="VISTA Logo" className="h-8 w-8 object-contain" />
           
           <div className="flex items-center gap-3 text-sm font-semibold tracking-tight text-foreground">
             VISTA Assistant
@@ -83,6 +78,13 @@ export default function Header({ createNewChat, sidebarCollapsed, setSidebarOpen
 
       {/* Right side buttons */}
       <div className="flex items-center gap-3">
+        {/* LLM Selector */}
+        <LLMSelector 
+          selectedLLM={selectedLLM} 
+          onLLMChange={onLLMChange}
+          visible={showLLMSelector}
+        />
+
         {/* Theme Toggle */}
         <ThemeToggle theme={theme} setTheme={setTheme} />
 

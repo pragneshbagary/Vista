@@ -3,6 +3,7 @@
 
 import logging
 import sys
+import os
 from pathlib import Path
 from typing import Optional, List, Dict
 
@@ -23,6 +24,7 @@ from vista.query_engine import QueryEngine
 # Request/Response models
 class ChatRequest(BaseModel):
     message: str
+    llm_provider: Optional[str] = None  # Optional LLM provider override
     
 class SourceDocument(BaseModel):
     text: str
@@ -174,7 +176,7 @@ async def chat(request: ChatRequest):
     Handle chat requests from the frontend.
     
     Args:
-        request: ChatRequest with user message
+        request: ChatRequest with user message and optional llm_provider
         
     Returns:
         ChatResponse with AI response and optional sources
@@ -189,8 +191,43 @@ async def chat(request: ChatRequest):
         logger = logging.getLogger(__name__)
         logger.info(f"Processing query: {request.message}")
         
+        # If a specific LLM provider is requested, create a new LLM client
+        if request.llm_provider:
+            logger.info(f"Using LLM provider: {request.llm_provider}")
+            config = Config.from_env()
+            
+            # Get the API key and model for the requested provider
+            if request.llm_provider == "openai":
+                api_key = config.openai_api_key
+                # Use OpenAI model from env or default
+                model = os.getenv("OpenAI_MODEL", "gpt-4o-mini")
+            elif request.llm_provider == "gemini":
+                api_key = config.gemini_api_key
+                # Use Gemini model from env or default
+                model = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+            else:
+                raise ValueError(f"Unknown LLM provider: {request.llm_provider}")
+            
+            if not api_key:
+                raise ValueError(f"API key not configured for provider: {request.llm_provider}")
+            
+            # Create LLM client for the requested provider
+            llm_client = LLMFactory.create_llm_client(
+                provider=request.llm_provider,
+                api_key=api_key,
+                model=model
+            )
+            
+            # Temporarily update the query engine's LLM client
+            original_llm = query_engine.llm_client
+            query_engine.llm_client = llm_client
+        
         # Use your existing query engine to get the response
         result = query_engine.query(request.message)
+        
+        # Restore original LLM client if we switched providers
+        if request.llm_provider:
+            query_engine.llm_client = original_llm
         
         # Handle different possible return types
         # Case 1: result is a QueryResponse object with .answer attribute
