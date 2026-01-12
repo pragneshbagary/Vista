@@ -136,11 +136,13 @@ def initialize_vista() -> QueryEngine:
 app = FastAPI(title="VISTA API", description="Personal RAG Chatbot API")
 
 # Add CORS middleware to allow frontend to communicate
+# In production, restrict to your specific domain
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify your frontend URL
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
@@ -280,10 +282,12 @@ async def health_check():
 
 if __name__ == "__main__":
     # Run the server
+    # Use reload=False in production, reload=True for development
+    is_production = os.getenv("ENVIRONMENT", "development") == "production"
     uvicorn.run(
         "api_server:app",
         host="0.0.0.0",
-        port=8000,
-        reload=True,  # Auto-reload on code changes during development
-        log_level="info"
+        port=int(os.getenv("PORT", 8000)),
+        reload=not is_production,
+        log_level=os.getenv("LOG_LEVEL", "info")
     )
