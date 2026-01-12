@@ -145,8 +145,9 @@ class QueryEngine:
 
 {self.identity_prompt}
 
-The user asked a question, but no relevant information was found.
-Respond honestly and say that you do not have enough information.
+The user asked a question, but no relevant information was found in the knowledge base.
+Respond honestly and say that you do not have enough information to answer this question.
+Suggest what kind of information would help answer their question better.
 Do not speculate or fabricate details.
 
 Question:
@@ -178,8 +179,13 @@ Answer:
 
 {self.identity_prompt}
 
-Answer the question using ONLY the context below.
-If the context is insufficient, say so clearly.
+INSTRUCTIONS:
+- Use the context below to answer the user's question accurately
+- Be specific and reference the relevant details from the context
+- If the context contains information about technologies, decisions, or outcomes, include those details
+- If the context is insufficient to fully answer the question, acknowledge what you know and what you don't
+- Maintain a technical, grounded tone
+- Do not speculate beyond what the context provides
 
 Question:
 {question}
