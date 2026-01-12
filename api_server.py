@@ -7,8 +7,9 @@ import os
 from pathlib import Path
 from typing import Optional, List, Dict
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 import uvicorn
 
@@ -19,6 +20,7 @@ from vista.embedding_generator import EmbeddingGenerator
 from vista.vector_store import VectorStoreManager
 from vista.llm_factory import LLMFactory
 from vista.query_engine import QueryEngine
+from vista.security import SecurityManager
 
 
 # Request/Response models
@@ -37,6 +39,7 @@ class ChatResponse(BaseModel):
 
 # Global query engine instance
 query_engine: Optional[QueryEngine] = None
+security_manager: Optional[SecurityManager] = None
 
 
 def setup_logging() -> None:
@@ -51,6 +54,7 @@ def setup_logging() -> None:
 def initialize_vista() -> QueryEngine:
     """Initialize VISTA system - same as main.py but returns QueryEngine."""
     logger = logging.getLogger(__name__)
+    global security_manager
     
     try:
         logger.info("Starting Vista API Server...")
@@ -128,16 +132,47 @@ def initialize_vista() -> QueryEngine:
         return engine
         
     except Exception as e:
-        logger.error(f"VISTA initialization failed: {e}")
+        # Sanitize error before logging
+        if security_manager:
+            sanitized_error = security_manager.sanitize_error_message(e)
+        else:
+            sanitized_error = str(e)
+        logger.error(f"VISTA initialization failed: {sanitized_error}")
         raise
 
 
 # Create FastAPI app
 app = FastAPI(title="VISTA API", description="Personal RAG Chatbot API")
 
+
+# CORS validation middleware
+async def cors_validation_middleware(request: Request, call_next):
+    """Validate CORS origin before processing request."""
+    global security_manager
+    
+    # Get origin from request
+    origin = request.headers.get("origin")
+    
+    # If origin is present, validate it
+    if origin and security_manager:
+        if not security_manager.validate_origin(origin):
+            return JSONResponse(
+                status_code=403,
+                content={"detail": "Origin not allowed"}
+            )
+    
+    response = await call_next(request)
+    return response
+
+
+# Add CORS validation middleware
+app.middleware("http")(cors_validation_middleware)
+
 # Add CORS middleware to allow frontend to communicate
 # In production, restrict to your specific domain
 allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+allowed_origins = [origin.strip() for origin in allowed_origins if origin.strip()]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
@@ -150,11 +185,18 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     """Initialize VISTA when server starts."""
-    global query_engine
+    global query_engine, security_manager
     setup_logging()
     logger = logging.getLogger(__name__)
     
     try:
+        # Load configuration
+        config = Config.from_env()
+        
+        # Initialize security manager with CORS whitelist
+        security_manager = SecurityManager(config.allowed_origins)
+        logger.info(f"Security manager initialized with {len(config.allowed_origins)} allowed origins")
+        
         query_engine = initialize_vista()
         logger.info("VISTA API Server ready!")
     except Exception as e:
@@ -183,6 +225,8 @@ async def chat(request: ChatRequest):
     Returns:
         ChatResponse with AI response and optional sources
     """
+    global security_manager
+    
     if not query_engine:
         raise HTTPException(status_code=503, detail="VISTA not initialized")
     
@@ -268,7 +312,11 @@ async def chat(request: ChatRequest):
     except Exception as e:
         logger = logging.getLogger(__name__)
         logger.error(f"Error processing query: {e}")
-        raise HTTPException(status_code=500, detail=f"Error processing query: {str(e)}")
+        
+        # Sanitize error message before sending to client
+        sanitized_error = security_manager.sanitize_error_message(e) if security_manager else str(e)
+        
+        raise HTTPException(status_code=500, detail=f"Error processing query: {sanitized_error}")
 
 
 @app.get("/health")
