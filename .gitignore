@@ -156,3 +156,11 @@ swc/
 
 # Testing
 coverage/
+coverage/
+
+
+# Ignore all markdown files
+*.md
+
+# But DO NOT ignore README.md
+!README.md
