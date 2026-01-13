@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: vista-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python api_server.py
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PORT
+        value: 8000
+      - key: LOG_LEVEL
+        value: info
+      - key: WORKERS
+        value: 2
+      - key: TIMEOUT
+        value: 120
+      - key: GRACEFUL_TIMEOUT
+        value: 30
+      - key: LLM_PROVIDER
+        scope: project
+      - key: LLM_MODEL
+        scope: project
+      - key: OPENAI_API_KEY
+        scope: project
+      - key: GEMINI_API_KEY
+        scope: project
+      - key: ALLOWED_ORIGINS
+        scope: project
+      - key: DATA_DIRECTORY
+        value: ./data
+      - key: PERSIST_DIRECTORY
+        value: /var/data/chroma_db
+    disk:
+      name: chroma-data
+      mountPath: /var/data
+      sizeGB: 1
