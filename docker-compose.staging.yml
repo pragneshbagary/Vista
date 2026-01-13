@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  api:
+    image: ghcr.io/${GITHUB_REPOSITORY}:develop
+    container_name: vista-api-staging
+    ports:
+      - "8000:8000"
+    environment:
+      ENVIRONMENT: staging
+      PORT: 8000
+      LOG_LEVEL: debug
+      WORKERS: 2
+      TIMEOUT: 120
+      GRACEFUL_TIMEOUT: 30
+      LLM_PROVIDER: ${LLM_PROVIDER}
+      LLM_MODEL: ${LLM_MODEL}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+      DATA_DIRECTORY: ./data
+      PERSIST_DIRECTORY: /app/chroma_db
+    volumes:
+      - chroma-data:/app/chroma_db
+      - ./data:/app/data:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+    networks:
+      - vista-network
+
+  frontend:
+    image: node:20-alpine
+    container_name: vista-frontend-staging
+    working_dir: /app/frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_VISTA_API_URL: http://api:8000
+      NODE_ENV: production
+    volumes:
+      - ./frontend:/app/frontend
+    command: npm run start
+    depends_on:
+      - api
+    networks:
+      - vista-network
+
+volumes:
+  chroma-data:
+    driver: local
+
+networks:
+  vista-network:
+    driver: bridge

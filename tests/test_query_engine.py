@@ -67,6 +67,7 @@ class TestQueryEngine:
         
         self.mock_embedding_gen.generate_embedding.return_value = query_embedding
         self.mock_vector_store.query.return_value = []
+        self.mock_llm_client.generate_response.return_value = "I don't have any relevant information about that."
         
         # Execute query
         result = self.query_engine.query(question)
@@ -74,7 +75,7 @@ class TestQueryEngine:
         # Verify calls
         self.mock_embedding_gen.generate_embedding.assert_called_once_with(question)
         self.mock_vector_store.query.assert_called_once_with(query_embedding, 5)
-        self.mock_llm_client.generate_response.assert_not_called()
+        self.mock_llm_client.generate_response.assert_called_once()
         
         # Verify result
         assert isinstance(result, QueryResponse)
@@ -93,7 +94,7 @@ class TestQueryEngine:
             )
         ]
         
-        prompt = self.query_engine._construct_prompt(question, chunks)
+        prompt = self.query_engine._construct_rag_prompt(question, chunks)
         
         assert question in prompt
         assert "I have 5 years of experience." in prompt
@@ -105,10 +106,10 @@ class TestQueryEngine:
         question = "What is my experience?"
         chunks = []
         
-        prompt = self.query_engine._construct_prompt(question, chunks)
+        prompt = self.query_engine._construct_no_context_prompt(question)
         
         assert question in prompt
-        assert "No relevant context found" in prompt
+        assert "no relevant information" in prompt.lower()
     
     def test_limit_context_size(self):
         """Test context size limiting."""

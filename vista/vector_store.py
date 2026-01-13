@@ -2,6 +2,7 @@
 
 from typing import List, Optional
 import logging
+import os
 import chromadb
 from chromadb.config import Settings
 
@@ -11,18 +12,69 @@ logger = logging.getLogger(__name__)
 
 
 class VectorStoreManager:
-    """Manages ChromaDB vector store for storing and retrieving embeddings."""
+    """Manages ChromaDB vector store for storing and retrieving embeddings.
+    
+    Supports both local persistence and Chroma Cloud for production deployments.
+    """
     
     def __init__(self, persist_directory: str = "./chroma_db"):
-        """Initialize ChromaDB client with persistence.
+        """Initialize ChromaDB client with persistence or cloud.
         
         Args:
-            persist_directory: Directory for ChromaDB persistence
+            persist_directory: Directory for local ChromaDB persistence
+            
+        Environment Variables:
+            CHROMA_API_IMPL: Set to 'rest' to use Chroma Cloud
+            CHROMA_SERVER_HOST: Chroma Cloud host (default: api.trychroma.com)
+            CHROMA_SERVER_HTTP_PORT: Chroma Cloud port (default: 443)
+            CHROMA_SERVER_SSL_ENABLED: Enable SSL (default: true)
+            CHROMA_TENANT: Chroma Cloud tenant ID
+            CHROMA_API_KEY: Chroma Cloud API key
         """
         self.persist_directory = persist_directory
-        self.client = chromadb.PersistentClient(path=persist_directory)
+        self.client = self._initialize_client()
         self.collection: Optional[chromadb.Collection] = None
-        logger.info(f"Initialized ChromaDB client with persistence at {persist_directory}")
+        logger.info("Initialized ChromaDB client")
+    
+    def _initialize_client(self):
+        """Initialize ChromaDB client based on configuration.
+        
+        Returns:
+            ChromaDB client (local or cloud)
+        """
+        # Check if using Chroma Cloud
+        if os.getenv('CHROMA_API_IMPL') == 'rest':
+            logger.info("Using Chroma Cloud for vector storage")
+            
+            # Get Chroma Cloud configuration
+            host = os.getenv('CHROMA_SERVER_HOST', 'api.trychroma.com')
+            port = int(os.getenv('CHROMA_SERVER_HTTP_PORT', 443))
+            ssl_enabled = os.getenv('CHROMA_SERVER_SSL_ENABLED', 'true').lower() == 'true'
+            tenant = os.getenv('CHROMA_TENANT')
+            api_key = os.getenv('CHROMA_API_KEY')
+            
+            if not tenant or not api_key:
+                raise ValueError(
+                    "CHROMA_TENANT and CHROMA_API_KEY environment variables are required "
+                    "when using Chroma Cloud (CHROMA_API_IMPL=rest)"
+                )
+            
+            # Create HTTP client for Chroma Cloud
+            client = chromadb.HttpClient(
+                host=host,
+                port=port,
+                ssl=ssl_enabled,
+                headers={
+                    'Authorization': f'Bearer {api_key}',
+                    'X-Chroma-Tenant': tenant
+                }
+            )
+            logger.info(f"Connected to Chroma Cloud at {host}:{port}")
+            return client
+        else:
+            # Use local persistence
+            logger.info(f"Using local ChromaDB persistence at {self.persist_directory}")
+            return chromadb.PersistentClient(path=self.persist_directory)
     
     def create_collection(self, collection_name: str) -> None:
         """Create or get collection.

@@ -18,7 +18,7 @@ class TestLLMClient:
         assert client.model == "gpt-3.5-turbo"
         assert client.client is not None
     
-    @patch('vista.llm_client.OpenAI')
+    @patch('vista.llm_openai.OpenAI')
     def test_generate_response_success(self, mock_openai):
         """Test successful response generation."""
         # Mock the OpenAI client and response
@@ -45,7 +45,7 @@ class TestLLMClient:
         assert result == "Test response"
         mock_client.chat.completions.create.assert_called_once()
     
-    @patch('vista.llm_client.OpenAI')
+    @patch('vista.llm_openai.OpenAI')
     def test_generate_response_empty_response(self, mock_openai):
         """Test handling of empty response."""
         mock_client = Mock()
@@ -67,7 +67,7 @@ class TestLLMClient:
         with pytest.raises(Exception, match="Empty response from OpenAI API"):
             client.generate_response("Test prompt")
     
-    @patch('vista.llm_client.time.sleep')
+    @patch('vista.llm_openai.time.sleep')
     def test_retry_with_backoff_success_on_retry(self, mock_sleep):
         """Test retry logic succeeds on second attempt."""
         client = OpenAILLMClient(api_key="test-key")
@@ -81,7 +81,7 @@ class TestLLMClient:
         assert mock_func.call_count == 2
         mock_sleep.assert_called_once_with(1)  # 2^0 = 1 second delay
     
-    @patch('vista.llm_client.time.sleep')
+    @patch('vista.llm_openai.time.sleep')
     def test_retry_with_backoff_all_attempts_fail(self, mock_sleep):
         """Test retry logic when all attempts fail."""
         client = OpenAILLMClient(api_key="test-key")

@@ -157,6 +157,7 @@ swc/
 # Testing
 coverage/
 coverage/
+.hypothesis
 
 
 # Ignore all markdown files

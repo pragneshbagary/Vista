@@ -1,0 +1,227 @@
+# Deployment Configuration for VISTA Personal AI RAG System
+
+# Deployment targets
+targets:
+  render:
+    enabled: true
+    description: "Render cloud platform"
+    health_check_url: "${RENDER_API_URL}/health"
+    monitoring_enabled: true
+    auto_rollback_enabled: true
+    
+  aws:
+    enabled: false
+    description: "AWS ECS deployment"
+    health_check_url: "${AWS_LOAD_BALANCER_DNS}/health"
+    monitoring_enabled: true
+    auto_rollback_enabled: true
+    
+  docker:
+    enabled: false
+    description: "Docker self-hosted deployment"
+    health_check_url: "http://localhost:8000/health"
+    monitoring_enabled: true
+    auto_rollback_enabled: true
+    
+  vercel:
+    enabled: false
+    description: "Vercel frontend deployment"
+    health_check_url: "https://yourdomain.com"
+    monitoring_enabled: true
+    auto_rollback_enabled: false
+
+# Monitoring configuration
+monitoring:
+  enabled: true
+  check_interval: 30  # seconds
+  monitoring_duration: 300  # seconds (5 minutes)
+  continuous_monitoring: false
+  
+  # Health check thresholds
+  thresholds:
+    error_rate: 5  # percentage
+    response_time: 1000  # milliseconds
+    max_consecutive_failures: 3
+    failure_rate_threshold: 5  # percentage
+  
+  # Metrics to track
+  metrics:
+    - total_requests
+    - total_errors
+    - error_rate
+    - average_response_time_ms
+    - p95_response_time_ms
+    - p99_response_time_ms
+    - uptime_seconds
+
+# Rollback configuration
+rollback:
+  enabled: true
+  auto_rollback_on_failure: true
+  
+  # Rollback triggers
+  triggers:
+    health_check_failure: true
+    high_error_rate: true
+    high_response_time: true
+    database_failure: true
+    llm_failure: true
+  
+  # Rollback behavior
+  behavior:
+    max_rollback_attempts: 3
+    rollback_timeout: 600  # seconds
+    verify_after_rollback: true
+    notify_team: true
+
+# Deployment stages
+stages:
+  pre_deployment:
+    - name: "Verify tests pass"
+      command: "pytest tests/ -v"
+      required: true
+    
+    - name: "Verify property tests pass"
+      command: "pytest tests/test_properties.py -v"
+      required: true
+    
+    - name: "Check pre-deployment checklist"
+      command: "cat PRE_DEPLOYMENT_CHECKLIST.md"
+      required: true
+  
+  deployment:
+    - name: "Build Docker image"
+      command: "docker build -t vista-api:latest ."
+      required: true
+    
+    - name: "Push to registry"
+      command: "docker push vista-api:latest"
+      required: true
+    
+    - name: "Deploy to target"
+      command: "scripts/deploy.sh"
+      required: true
+  
+  post_deployment:
+    - name: "Run smoke tests"
+      command: "pytest tests/test_smoke.py -v"
+      required: true
+    
+    - name: "Verify health check"
+      command: "curl -f ${API_URL}/health"
+      required: true
+    
+    - name: "Check post-deployment verification"
+      command: "cat POST_DEPLOYMENT_VERIFICATION.md"
+      required: true
+
+# Notifications
+notifications:
+  enabled: true
+  
+  channels:
+    slack:
+      enabled: false
+      webhook_url: "${SLACK_WEBHOOK_URL}"
+      events:
+        - deployment_started
+        - deployment_completed
+        - deployment_failed
+        - rollback_started
+        - rollback_completed
+        - rollback_failed
+    
+    email:
+      enabled: false
+      recipients:
+        - "devops@yourdomain.com"
+      events:
+        - deployment_failed
+        - rollback_triggered
+    
+    pagerduty:
+      enabled: false
+      integration_key: "${PAGERDUTY_INTEGRATION_KEY}"
+      events:
+        - deployment_failed
+        - rollback_triggered
+
+# Logging configuration
+logging:
+  enabled: true
+  log_file: ".deployment.log"
+  log_level: "info"
+  
+  # Log retention
+  retention:
+    max_size: "100M"
+    max_age: "30d"
+    max_backups: 10
+
+# Backup configuration
+backup:
+  enabled: true
+  
+  # Database backup
+  database:
+    enabled: true
+    frequency: "daily"
+    retention: "30d"
+    location: "/backups/database"
+  
+  # Configuration backup
+  configuration:
+    enabled: true
+    frequency: "on_deployment"
+    retention: "90d"
+    location: "/backups/configuration"
+
+# Security configuration
+security:
+  enabled: true
+  
+  # Secret management
+  secrets:
+    provider: "github_secrets"  # or "aws_secrets", "vault", etc.
+    rotation_enabled: true
+    rotation_frequency: "90d"
+  
+  # Audit logging
+  audit:
+    enabled: true
+    log_file: ".deployment-audit.log"
+    events:
+      - deployment_started
+      - deployment_completed
+      - rollback_triggered
+      - configuration_changed
+
+# Performance tuning
+performance:
+  # Deployment parallelization
+  parallel_deployments: false
+  max_parallel_tasks: 1
+  
+  # Caching
+  cache_enabled: true
+  cache_ttl: 3600  # seconds
+  
+  # Resource limits
+  resource_limits:
+    cpu: "2"
+    memory: "2G"
+
+# Advanced options
+advanced:
+  # Blue-green deployment
+  blue_green_enabled: false
+  
+  # Canary deployment
+  canary_enabled: false
+  canary_percentage: 10
+  
+  # Feature flags
+  feature_flags_enabled: false
+  
+  # A/B testing
+  ab_testing_enabled: false
