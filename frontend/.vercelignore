@@ -1,0 +1,67 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Environment files
+.env
+.env.local
+.env.*.local
+.env.production.example
+
+# Node modules
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Build artifacts
+.next
+dist
+build
+
+# Testing
+__tests__
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+.vitest
+coverage
+
+# Python files (backend)
+.pytest_cache
+__pycache__
+*.pyc
+.venv
+venv
+tests
+
+# Documentation and AI files
+.ai
+.plandex-v2
+*.md
+docs
+
+# Data files
+data
+chroma_db
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+logs
+
+# Misc
+.coverage
+.renderignore
+render.yaml
