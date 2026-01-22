@@ -1,0 +1,14 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "installCommand": "npm install",
+  "env": {
+    "NEXT_PUBLIC_VISTA_API_URL": "@next_public_vista_api_url",
+    "NEXT_PUBLIC_GITHUB_URL": "@next_public_github_url",
+    "NEXT_PUBLIC_LINKEDIN_URL": "@next_public_linkedin_url",
+    "NEXT_PUBLIC_EMAIL": "@next_public_email"
+  },
+  "buildOutputDirectory": ".next",
+  "framework": "nextjs",
+  "nodeVersion": "20.x"
+}

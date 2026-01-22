@@ -63,8 +63,13 @@ def initialize_system(config: Config) -> QueryEngine:
         embedding_generator = EmbeddingGenerator(model_name=config.embedding_model)
         
         # Initialize vector store
-        vector_store = VectorStoreManager(persist_directory=config.persist_directory)
-        vector_store.create_collection("personal_knowledge")
+        vector_store = VectorStoreManager(
+            api_key=config.pinecone_api_key,
+            environment=config.pinecone_environment,
+            index_name=config.pinecone_index_name,
+            namespace=config.pinecone_namespace
+        )
+        vector_store.create_collection()
         
         # Initialize LLM client using factory
         llm_client = LLMFactory.create_llm_client(

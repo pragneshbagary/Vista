@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: vista-api
+    env: python
+    plan: free
+    buildCommand: curl -LsSf https://astral.sh/uv/install.sh | sh && /root/.cargo/bin/uv sync --frozen
+    startCommand: /root/.cargo/bin/uv run python api_server.py
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: PORT
+        value: 8000
+      - key: LOG_LEVEL
+        value: info
+      - key: WORKERS
+        value: 2
+      - key: TIMEOUT
+        value: 120
+      - key: GRACEFUL_TIMEOUT
+        value: 30
+      - key: LLM_PROVIDER
+        scope: project
+      - key: GEMINI_API_KEY
+        scope: project
+      - key: OPENAI_API_KEY
+        scope: project
+      - key: ALLOWED_ORIGINS
+        scope: project
+      - key: DATA_DIRECTORY
+        value: ./data
+      - key: PINECONE_API_KEY
+        scope: project
+      - key: PINECONE_ENVIRONMENT
+        scope: project
+      - key: PINECONE_INDEX_NAME
+        value: vista-vectors
+      - key: PINECONE_NAMESPACE
+        value: default
