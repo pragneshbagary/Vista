@@ -3,8 +3,8 @@ services:
     name: vista-api
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python api_server.py
+    buildCommand: curl -LsSf https://astral.sh/uv/install.sh | sh && /root/.cargo/bin/uv sync --frozen
+    startCommand: /root/.cargo/bin/uv run python api_server.py
     envVars:
       - key: ENVIRONMENT
         value: production
@@ -20,19 +20,19 @@ services:
         value: 30
       - key: LLM_PROVIDER
         scope: project
-      - key: LLM_MODEL
+      - key: GEMINI_API_KEY
         scope: project
       - key: OPENAI_API_KEY
-        scope: project
-      - key: GEMINI_API_KEY
         scope: project
       - key: ALLOWED_ORIGINS
         scope: project
       - key: DATA_DIRECTORY
         value: ./data
-      - key: PERSIST_DIRECTORY
-        value: /var/data/chroma_db
-    disk:
-      name: chroma-data
-      mountPath: /var/data
-      sizeGB: 1
+      - key: PINECONE_API_KEY
+        scope: project
+      - key: PINECONE_ENVIRONMENT
+        scope: project
+      - key: PINECONE_INDEX_NAME
+        value: vista-vectors
+      - key: PINECONE_NAMESPACE
+        value: default

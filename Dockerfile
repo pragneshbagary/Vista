@@ -1,23 +1,28 @@
 # Multi-stage build for VISTA Personal AI RAG System
 
-# Stage 1: Build backend
+# Stage 1: Build backend with uv
 FROM python:3.12-slim as backend-builder
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies and uv
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Copy project files
 COPY pyproject.toml .
+COPY uv.lock .
 COPY vista/ ./vista/
 COPY data/ ./data/
 COPY api_server.py .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -e .
+# Install Python dependencies with uv
+RUN /root/.cargo/bin/uv sync --frozen --no-dev
 
 # Stage 2: Build frontend
 FROM node:20-alpine as frontend-builder
@@ -50,22 +55,24 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy Python dependencies from builder
-COPY --from=backend-builder /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
-COPY --from=backend-builder /usr/local/bin /usr/local/bin
+# Copy uv from builder
+COPY --from=backend-builder /root/.cargo/bin/uv /usr/local/bin/uv
+
+# Copy virtual environment from builder
+COPY --from=backend-builder /app/.venv /app/.venv
 
 # Copy application code
 COPY vista/ ./vista/
 COPY data/ ./data/
 COPY api_server.py .
-
-# Create persistence directory
-RUN mkdir -p /app/chroma_db
+COPY pyproject.toml .
+COPY uv.lock .
 
 # Set environment variables
 ENV PYTHONUNBUFFERED=1
 ENV ENVIRONMENT=production
 ENV PORT=8000
+ENV PATH="/app/.venv/bin:$PATH"
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \

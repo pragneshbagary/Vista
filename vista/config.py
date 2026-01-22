@@ -29,10 +29,15 @@ class Config:
     
     # Embedding Configuration
     embedding_model: str = "all-MiniLM-L6-v2"
+
+    # Pinecone Configuration
+    pinecone_api_key: Optional[str] = None
+    pinecone_environment: Optional[str] = None
+    pinecone_index_name: str = "vista-vectors"
+    pinecone_namespace: str = "default"
     
     # Directory Configuration
     data_directory: str = "./data"
-    persist_directory: str = "./chroma_db"
     
     # Chunking Configuration
     chunk_size: int = 500
@@ -82,6 +87,12 @@ class Config:
         openai_api_key = os.getenv("OPENAI_API_KEY")
         gemini_api_key = os.getenv("GEMINI_API_KEY")
         
+        # Load Pinecone config
+        pinecone_api_key = os.getenv("PINECONE_API_KEY")
+        pinecone_environment = os.getenv("PINECONE_ENVIRONMENT")
+        pinecone_index_name = os.getenv("PINECONE_INDEX_NAME", "vista-vectors")
+        pinecone_namespace = os.getenv("PINECONE_NAMESPACE", "default")
+        
         # Get model name with provider-specific defaults
         if llm_provider == "openai":
             default_model = "gpt-4o-mini"
@@ -107,7 +118,10 @@ class Config:
             allowed_origins=allowed_origins,
             embedding_model=os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2"),
             data_directory=os.getenv("DATA_DIRECTORY", "./data"),
-            persist_directory=os.getenv("PERSIST_DIRECTORY", "./chroma_db"),
+            pinecone_api_key=pinecone_api_key,
+            pinecone_environment=pinecone_environment,
+            pinecone_index_name=pinecone_index_name,
+            pinecone_namespace=pinecone_namespace,
             chunk_size=int(os.getenv("CHUNK_SIZE", "500")),
             chunk_overlap=int(os.getenv("CHUNK_OVERLAP", "50")),
             max_context_tokens=int(os.getenv("MAX_CONTEXT_TOKENS", "3000")),
@@ -157,6 +171,12 @@ class Config:
                 errors.append("GEMINI_API_KEY is required when LLM_PROVIDER is 'gemini'")
             elif not self._is_valid_gemini_key(self.gemini_api_key):
                 errors.append("GEMINI_API_KEY format is invalid (should start with 'AIza')")
+                
+        # Validate Pinecone Configuration
+        if not self.pinecone_api_key:
+            errors.append("PINECONE_API_KEY is required")
+        if not self.pinecone_environment:
+            errors.append("PINECONE_ENVIRONMENT is required")
         
         # Validate CORS origins in production
         if self.environment == "production":
@@ -194,9 +214,6 @@ class Config:
         # Validate paths
         if not self.data_directory:
             errors.append("DATA_DIRECTORY is required")
-        
-        if not self.persist_directory:
-            errors.append("PERSIST_DIRECTORY is required")
         
         if errors:
             error_message = "Configuration validation failed:\n"

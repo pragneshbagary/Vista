@@ -44,10 +44,15 @@ def rebuild_knowledge_base() -> None:
             overlap=config.chunk_overlap
         )
         embedding_generator = EmbeddingGenerator(model_name=config.embedding_model)
-        vector_store = VectorStoreManager(persist_directory=config.persist_directory)
+        vector_store = VectorStoreManager(
+            api_key=config.pinecone_api_key,
+            environment=config.pinecone_environment,
+            index_name=config.pinecone_index_name,
+            namespace=config.pinecone_namespace
+        )
         
-        # Create collection
-        vector_store.create_collection("personal_knowledge")
+        # Create collection (or get existing index)
+        vector_store.create_collection()
         
         # Reset collection to clear old data
         logger.info("Clearing existing knowledge base...")

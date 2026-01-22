@@ -77,8 +77,13 @@ def initialize_vista() -> QueryEngine:
             overlap=config.chunk_overlap
         )
         embedding_generator = EmbeddingGenerator(model_name=config.embedding_model)
-        vector_store = VectorStoreManager(persist_directory=config.persist_directory)
-        vector_store.create_collection("personal_knowledge")
+        vector_store = VectorStoreManager(
+            api_key=config.pinecone_api_key,
+            environment=config.pinecone_environment,
+            index_name=config.pinecone_index_name,
+            namespace=config.pinecone_namespace
+        )
+        vector_store.create_collection()
         
         # Initialize LLM client
         llm_client = LLMFactory.create_llm_client(
