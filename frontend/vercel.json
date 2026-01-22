@@ -8,7 +8,6 @@
     "NEXT_PUBLIC_LINKEDIN_URL": "@next_public_linkedin_url",
     "NEXT_PUBLIC_EMAIL": "@next_public_email"
   },
-  "buildOutputDirectory": ".next",
   "framework": "nextjs",
   "nodeVersion": "20.x"
 }
