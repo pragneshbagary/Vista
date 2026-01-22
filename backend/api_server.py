@@ -406,7 +406,11 @@ async def chat(request: ChatRequest):
 
 
 @app.get("/health")
-async def health_check():
+async def health():
+    return {"status": "healthy"}
+
+@app.get("/ready")
+async def readiness_check():
     """Detailed health check endpoint."""
     global health_checker
     
