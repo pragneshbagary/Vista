@@ -1,0 +1,23 @@
+
+> vista@1.0.0 build
+> next build
+
+   ▲ Next.js 15.5.9
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 750ms
+   Linting and checking validity of types ...
+Failed to compile.
+
+./components/ui/form.tsx:7:3
+Type error: Module '"react-hook-form"' has no exported member 'Controller'.
+
+[0m [90m  5 |[39m [36mimport[39m { [33mSlot[39m } [36mfrom[39m [32m'@radix-ui/react-slot'[39m
+ [90m  6 |[39m [36mimport[39m {
+[31m[1m>[22m[39m[90m  7 |[39m   [33mController[39m[33m,[39m
+ [90m    |[39m   [31m[1m^[22m[39m
+ [90m  8 |[39m   [33mFormProvider[39m[33m,[39m
+ [90m  9 |[39m   useFormContext[33m,[39m
+ [90m 10 |[39m   useFormState[33m,[39m[0m
+Next.js build worker exited with code: 1 and signal: null
