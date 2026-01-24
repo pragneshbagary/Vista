@@ -65,11 +65,6 @@ def initialize_vista() -> QueryEngine:
         logger.info(f"Using LLM Provider: {config.llm_provider}")
         logger.info(f"Using LLM Model: {config.llm_model}")
         
-        # Validate data directory
-        data_path = Path(config.data_directory)
-        if not data_path.exists():
-            raise Exception(f"Data directory does not exist: {config.data_directory}")
-        
         # Initialize core components
         document_loader = DocumentLoader()
         text_chunker = TextChunker(
@@ -108,6 +103,12 @@ def initialize_vista() -> QueryEngine:
         
         # Build knowledge base if needed
         logger.info("Building knowledge base from documents...")
+        
+        # Check for data directory only if we need to build the KB
+        data_path = Path(config.data_directory)
+        if not data_path.exists():
+             raise Exception(f"Cannot build knowledge base: Data directory does not exist at {config.data_directory}")
+            
         documents = document_loader.load_documents(config.data_directory)
         
         if not documents:
