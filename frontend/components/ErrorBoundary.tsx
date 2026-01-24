@@ -37,7 +37,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
     // Send error to monitoring service (if configured)
     logErrorToMonitoring({
       message: sanitizedError,
-      stack: errorInfo.componentStack,
+      stack: errorInfo.componentStack || '',
       timestamp: new Date().toISOString(),
     })
   }
