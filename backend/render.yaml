@@ -8,8 +8,6 @@ services:
     envVars:
       - key: ENVIRONMENT
         value: production
-      - key: PORT
-        value: 8000
       - key: LOG_LEVEL
         value: info
       - key: WORKERS
