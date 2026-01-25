@@ -45,7 +45,7 @@ data/
 DATA_DIRECTORY/
 */data/
 prompts/
-frontend/public
+# frontend/public
 
 outputs/
 results/
